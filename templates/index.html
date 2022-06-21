@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% if name %}
+            <title>Yes {{ name }}</title>
+        {% else %}
+            <title>Yes?</title>
+        {% endif %}
+    </head>
+    <body>
+        <h1>test for flask</h1>
+        <ul>
+            {% for i in tlist %}
+            <li>
+                {{i}}
+            </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
