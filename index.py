@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask import make_response
 from wsgiref.simple_server import make_server
 import MySQLdb as sql
 import json
@@ -20,17 +21,21 @@ def initMysql():
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def index():
-    #try:
-    #    cursor = db.cursor()
-    #except Exception as e:
-    #    print(e.with_traceback())
-    
-    # test for template for
-    #   result = [1,2,3]#cursor.execute()
-    return render_template("index.html",name="test index")#,tlist=result)
+    # html response success, maybe need a 404 page
+    response = make_response(render_template('index.html', name="test index"))
+
+    # set headers
+    #response.headers['user_type'] = 'doctor'
+    #response.headers['user_id'] = '114514'
+
+    # set cookie    cookieId value path
+    response.set_cookie("user_type","doctor",path="/test/")
+    response.set_cookie("user_id","114514")
+
+
+    return response     #render_template("index.html")#,tlist=result)
 
 if __name__ == "__main__":
     initMysql()
@@ -40,7 +45,7 @@ if __name__ == "__main__":
     
 
 '''
-
+# test for mysql select from sql
 def testSql():
     global db
     cursor = db.cursor()
