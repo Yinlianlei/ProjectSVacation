@@ -38,7 +38,7 @@ def index():
     return response     #render_template("index.html")#,tlist=result)
 
 if __name__ == "__main__":
-    initMysql()
+    initMysql()#test!
     server = make_server('127.0.0.1', 5000, app)
     server.serve_forever()
     app.run()
