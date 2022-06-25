@@ -62,12 +62,36 @@ def execute4mysql(command):
         for i in command.split(';'):
             # 执行sql语句
             cursor.execute(i)
-            print(cursor.fetchall())
+            method = i.split(' ')[0].lower()
+            if method == "select":
+                for j in cursor.fetchall():
+                    print(j)
             # 提交到数据库执行
             db.commit()
     except Exception as e:
         # 如果发生错误则回滚
         print(i)
+        db.rollback()
+
+
+# function for login
+def mysql4login(phone,pwd):
+    try:
+        global db
+        cursor = db.cursor()
+        # 执行sql语句
+        command = "select user_pnum,user_psd from userinfo where user_pnum = "+phone+" and user_psd = "+pwd+";"
+        cursor.execute(command)
+        re = cursor.fetchall()
+        if(len(re) != 1):
+            return -1
+        print(re[0])
+        return 0
+        # 提交到数据库执行
+        db.commit()
+    except Exception as e:
+        # 如果发生错误则回滚
+        print(e)
         db.rollback()
 
 def test4neo():
@@ -217,12 +241,15 @@ def test():
 #POST from register
 @app.route('/response/',methods=['POST'])
 def response():
-    res = "POST success"
+    res = ""
     if request.method == 'POST':
         phone = request.form['user']
         pwd = request.form['password']
 
-
+        if mysql4login(phone,pwd) == 0:
+            res = "login success"
+        else:
+            res = "login failed"
 
     response = make_response(render_template('response.html', name="test response",res=res))
     
@@ -236,12 +263,12 @@ if __name__ == "__main__":
     #command4mysql()
     #test4neo()
 
-    command4mysql()
+    #execute4mysql("select * from userinfo")
 
-    #server = make_server('127.0.0.1', 5000, app)
-    #server.serve_forever()
-    #app.debug = True
-    #app.run()
+    server = make_server('127.0.0.1', 5000, app)
+    server.serve_forever()
+    app.debug = True
+    app.run()
     
 
 '''
