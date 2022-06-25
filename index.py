@@ -1,17 +1,17 @@
-from flask import Flask
-from flask import render_template
-from flask import make_response
+from crypt import methods
+from flask import Flask,render_template,make_response,request
 from wsgiref.simple_server import make_server
 import MySQLdb as sql
-from py2neo import Graph,Node,Relationship
+from py2neo import Graph,Node,Relationship,Subgraph
 import json
+import numpy as np
 
 from sqlalchemy import null
 
 # declear and init mysql
 db = null
 neo = null
-def initMysql():
+def initSql():
     with open("./static/sql.json","r") as f:
         try:
             data = json.load(f)
@@ -22,6 +22,14 @@ def initMysql():
                             data["mysql"]['password'],
                             data["mysql"]['table'],
                             charset='utf8')
+        except Exception as e:
+            print(e.with_traceback())
+
+def initNeo():
+    with open("./static/sql.json","r") as f:
+        try:
+            data = json.load(f)
+            global neo
             # new version of py2neo
             neo = Graph("http://localhost:7474", auth=(
                         data["neo4j"]['user'],
@@ -31,34 +39,38 @@ def initMysql():
 
 # execute sql
 def command4mysql():
-    with open("./static/base.sql",'r') as f:
-        txt = f.read()
+    #txt = "insert into userinfo values(1,114514,0,8,'bobo','114514','hn')"
+    txt = "select * from userinfo"
+    global db
+    cursor = db.cursor()
+    try:
+        for i in txt.split(';'):
+            # 执行sql语句
+            cursor.execute(i)
+            print(cursor.fetchall())
+            # 提交到数据库执行
+            db.commit()
+    except Exception as e:
+        # 如果发生错误则回滚
+        print(i)
+        db.rollback()
+
+def execute4mysql(command):
+    try:
         global db
         cursor = db.cursor()
-        try:
-            for i in txt.split(';'):
-                # 执行sql语句
-                cursor.execute(i)
-                # 提交到数据库执行
-                db.commit()
-        except Exception as e:
-            # 如果发生错误则回滚
-            print(i)
-            db.rollback()
-
-def command4neo():
-    pass
+        for i in command.split(';'):
+            # 执行sql语句
+            cursor.execute(i)
+            print(cursor.fetchall())
+            # 提交到数据库执行
+            db.commit()
+    except Exception as e:
+        # 如果发生错误则回滚
+        print(i)
+        db.rollback()
 
 def test4neo():
-    #with open("./static/test.json","r") as f:
-    #    data = json.load(f)
-    #    node = []
-    #    rel = []
-    #    for i in data:
-    #        node.append(Node('Person',name=i['name']))
-    #        rel.append(i["relation"])
-    #    
-    #    #print(node,rel)
     #node1 = Node("Person",name="test1")
     #node2 = Node("Person",name="test2")
     #r = Relationship(node1,"wifi",node2)
@@ -70,8 +82,114 @@ def test4neo():
     data = neo.run("MATCH ()-[r]->() RETURN r LIMIT 20").data()
     print(data)
     
+#create nodes.json
+def processJson():
+    with open('./static/medical.json','r') as f:
+        testList = []
+        try:
+            for i in f.readlines():
+                txt = json.loads(i)
+                txt = txt['category']
+                if txt == []:
+                    continue
+                if len(txt) == 1:
+                    testList.append(txt[0])
+                    continue
+                elif len(txt) == 2:
+                    testList.append(str(txt[1]))
+                    continue
+                testList.append(str(txt[1])+":"+str(txt[2]))
+            testList = np.unique(testList)
+            print(testList)
+        except:
+            print(i)
 
+        nodes = {"疾病百科":[]}
+        for i in testList:
+            txt = i.split(":")
+            if len(txt) == 1:
+                nodes["疾病百科"].append({i:[]})
+            else:
+                nodes["疾病百科"].append({txt[0]:txt[1]})
+        
+        print(nodes)
+        nodes = json.dumps(nodes,ensure_ascii=False)
+        with open('./static/node.json','w') as f:
+            f.write(nodes)
 
+#add node dor neo4j
+def addNode1(nodeList,relationList,rootNode,nodes,nodeName,method="-"):
+    if nodeName not in nodes:
+        return nodeList,relationList
+    nodeSym = Node(nodeName,name=nodeName)
+    for j in nodes[nodeName]:
+        node = Node(nodeName[:4],name=j)
+        relationList.append(Relationship(nodeSym,method,node))
+        nodeList.append(node)
+    nodeList.append(nodeSym)
+    relationList.append(Relationship(rootNode,nodeName,nodeSym))
+    return nodeList,relationList
+
+def addNode2(nodeList,relationList,rootNode,nodes,nodeName,method="-"):
+    if nodeName not in nodes:
+        return nodeList,relationList
+    node = [Node(nodeName,name=j) for j in nodes[nodeName]]
+    for j in node:
+        nodeList.append(j)
+    for j in range(1,len(node)):
+        relationList.append(Relationship(node[j-1],method,node[j]))
+    relationList.append(Relationship(rootNode,nodeName,node[0]))
+    return nodeList,relationList
+
+def processNodes():
+    with open("./static/medical.json",'r') as f:
+        global neo
+        nodes = f.read()
+        #print(nodes)
+        nodes = json.loads(nodes)
+        #neo.create(nodeRoot)
+        try:
+            for i in nodes:
+                createNode = []
+                createRelation = []
+                nodeDisser = Node("disser",name=i['name'])
+                nodeLabelList = ["yibao_status",'get_prob','get_way','cure_lasttime','cured_prob','desc']
+                for j in nodeLabelList:
+                    if j in i:
+                        nodeDisser.add_label(j)
+                createNode.append(nodeDisser)
+
+                nodePrevent = Node("preventNode",name="preventNode")
+                for j in i['prevent'].split('\n'):
+                    node = Node('prevent',method=j)
+                    createRelation.append(Relationship(nodePrevent,"method",node))
+                    createNode.append(node)
+                createNode.append(nodePrevent)
+                createRelation.append(Relationship(nodeDisser,"prevent",nodePrevent))
+
+                createNode,createRelation = addNode2(createNode,createRelation,nodeDisser,i,'category')
+                createNode,createRelation = addNode2(createNode,createRelation,nodeDisser,i,'cure_department')
+
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'symptom')
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'acompany')
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'check')
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'cure_way','method')
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'do_eat')
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'not_eat')
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'recommand_eat')
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'recommand_drug')
+                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'drug_detail')
+            
+                sub = Subgraph(createNode,createRelation)
+                t = neo.begin()
+                t.create(sub)
+                neo.commit(t)
+        except Exception as e:
+            print(e)
+            print(i)
+            
+
+#for page   
 app = Flask(__name__)
 
 @app.route('/')
@@ -90,12 +208,39 @@ def index():
 
     return response     #render_template("index.html")#,tlist=result)
 
+#GET
+@app.route('/register/',methods=['GET','POST'])
+def test():
+    response = make_response(render_template('register.html', name="test post"))
+    return response
+
+#POST from register
+@app.route('/response/',methods=['POST'])
+def response():
+    res = "POST success"
+    if request.method == 'POST':
+        phone = request.form['user']
+        pwd = request.form['password']
+
+
+
+    response = make_response(render_template('response.html', name="test response",res=res))
+    
+    return response
+
 if __name__ == "__main__":
-    initMysql()
-    test4neo()
+    initSql()
+    #command4neo()
+    #processJson()
+    #processNodes()
     #command4mysql()
+    #test4neo()
+
+    command4mysql()
+
     #server = make_server('127.0.0.1', 5000, app)
     #server.serve_forever()
+    #app.debug = True
     #app.run()
     
 

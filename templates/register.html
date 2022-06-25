@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% if name %}
+            <title>Yes {{ name }}</title>
+        {% else %}
+            <title>Yes?</title>
+        {% endif %}
+    </head>
+    <body>
+        <form action="{{ url_for('response') }}" method="POST" >
+            PhoneNumber: <input type="text" name="user"><br>
+            Password: <input type="password" name="password"><br>
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>
