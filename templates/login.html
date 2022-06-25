@@ -7,8 +7,8 @@
     {% else %}
     <title>Yes?</title>
     {% endif %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'register.css') }}">
-    <script src="{{ url_for('static', filename='regiser.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'login.css') }}">
+    <script src="{{ url_for('static', filename='login.js') }}"></script>
 </head>
 
 <body>
@@ -17,10 +17,10 @@
             <h1>header</h1>
         </div>
         <div id="div_form">
-            <div id="div_register_image">
-                <img id="register_img" src="{{ url_for('static',filename='1.png') }}">
+            <div id="div_login_image">
+                <img id="login_img" src="{{ url_for('static',filename='1.png') }}">
             </div>
-            <div id="div_register_form">
+            <div id="div_login_form">
                 <form action="{{ url_for('response') }}" method="POST">
                     <svg t="1656128638011" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="2164" width="16" height="16">
@@ -40,7 +40,7 @@
                     <!-- user_password -->
                     <input type="password" name="password" id="passwordInput">
                     <!-- user_password icon can see or not -->
-                    <svg id="password_see_not" onclick="registerChange()" t="1656128768422" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    <svg id="password_see_not" onclick="loginChange()" t="1656128768422" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="3982" width="16" height="16">
                         <path
                             d="M469.333333 681.386667c-36.053333-2.432-71.253333-8.533333-104.96-17.92l-69.802666 149.674666a42.368 42.368 0 0 1-56.533334 20.266667 42.666667 42.666667 0 0 1-20.821333-56.32l66.986667-143.658667a451.712 451.712 0 0 1-148.906667-112.682666 388.693333 388.693333 0 0 1-70.570667-119.338667 42.666667 42.666667 0 1 1 80.128-29.354667 303.445333 303.445333 0 0 0 55.210667 93.098667C270.634667 547.413333 383.018667 597.333333 505.728 597.333333c122.752 0 235.136-49.962667 305.706667-132.181333a303.445333 303.445333 0 0 0 55.210666-93.098667 42.666667 42.666667 0 0 1 80.128 29.354667 388.693333 388.693333 0 0 1-70.570666 119.338667 423.68 423.68 0 0 1-18.773334 20.48l104.362667 104.362666a42.666667 42.666667 0 0 1-0.298667 60.032 42.368 42.368 0 0 1-60.032 0.298667l-109.653333-109.653333c-20.48 14.08-42.24 26.581333-65.024 37.418666l66.901333 143.36a42.666667 42.666667 0 0 1-20.821333 56.362667 42.368 42.368 0 0 1-56.533333-20.266667l-69.717334-149.546666a520.533333 520.533333 0 0 1-91.946666 16.810666v130.645334A42.666667 42.666667 0 0 1 512 853.333333c-23.722667 0-42.666667-18.944-42.666667-42.24v-129.706666z"
@@ -49,7 +49,7 @@
                             d="M176.128 524.373333a42.368 42.368 0 0 1 60.032 0.256 42.666667 42.666667 0 0 1 0.298667 60.074667l-121.216 121.216a42.368 42.368 0 0 1-60.074667-0.298667 42.666667 42.666667 0 0 1-0.298667-60.032l121.258667-121.258666z"
                             fill="#3D3D3D" p-id="3984"></path>
                     </svg>
-                    <svg id="password_see" onclick="registerChange()" t="1656128911300" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    <svg id="password_see" onclick="loginChange()" t="1656128911300" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="4210" width="16" height="16">
                         <path
                             d="M515.2 224c-307.2 0-492.8 313.6-492.8 313.6s214.4 304 492.8 304 492.8-304 492.8-304S822.4 224 515.2 224zM832 652.8c-102.4 86.4-211.2 140.8-320 140.8s-217.6-51.2-320-140.8c-35.2-32-70.4-64-99.2-99.2-6.4-6.4-9.6-12.8-16-19.2 3.2-6.4 9.6-12.8 12.8-19.2 25.6-35.2 57.6-70.4 92.8-102.4 99.2-89.6 208-144 329.6-144s230.4 54.4 329.6 144c35.2 32 64 67.2 92.8 102.4 3.2 6.4 9.6 12.8 12.8 19.2-3.2 6.4-9.6 12.8-16 19.2C902.4 585.6 870.4 620.8 832 652.8z"

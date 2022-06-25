@@ -1,4 +1,4 @@
-function registerChange(){
+function loginChange(){
     var target1 = document.getElementById("password_see_not");
     var target2 = document.getElementById("password_see");
     var pwd = document.getElementById("passwordInput");

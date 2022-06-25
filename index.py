@@ -233,9 +233,9 @@ def index():
     return response     #render_template("index.html")#,tlist=result)
 
 #GET
-@app.route('/register/',methods=['GET','POST'])
+@app.route('/login/',methods=['GET','POST'])
 def test():
-    response = make_response(render_template('register.html', name="test post"))
+    response = make_response(render_template('login.html', name="test post"))
     return response
 
 #POST from register
