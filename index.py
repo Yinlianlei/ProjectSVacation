@@ -86,9 +86,9 @@ def mysql4login(phone,pwd):
         if(len(re) != 1):
             return -1
         print(re[0])
-        return 0
         # 提交到数据库执行
         db.commit()
+        return 0
     except Exception as e:
         # 如果发生错误则回滚
         print(e)
@@ -245,7 +245,6 @@ def response():
     if request.method == 'POST':
         phone = request.form['user']
         pwd = request.form['password']
-
         if mysql4login(phone,pwd) == 0:
             res = "login success"
         else:

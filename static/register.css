@@ -1,0 +1,33 @@
+#grid_base {
+    display: grid;
+    grid-template-rows: 30% auto 10%;
+}
+
+#div_head{
+    height: auto;
+    text-align: center;
+}
+
+#div_footer{
+    height: auto;
+    text-align: center;
+}
+
+#register_img { 
+    width: 100%;
+    height: 100%;
+}
+
+#div_form {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    background-color: beige;
+}
+
+#password_see_not {
+    display:inline;
+}
+
+#password_see {
+    display: none;
+}
