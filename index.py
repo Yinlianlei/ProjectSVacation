@@ -254,6 +254,19 @@ def response():
     
     return response
 
+# Question & answer
+@app.route('/consult',methods=['POST','GET'])
+def consult():
+    res = ""
+    if request.method == 'POST':
+        print(request.form['question_text'])
+    if request.method == 'GET':
+        pass
+
+    response = make_response(render_template('consult.html', name="test consult",res=res,doctor="1.png"))
+    
+    return response
+
 if __name__ == "__main__":
     initSql()
     #command4neo()

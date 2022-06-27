@@ -36,5 +36,5 @@ def history():
     return render_template("history.html", data1=str(data[0])[2:-3], data2=str(data[1])[2:-3], data3=str(data[2])[2:-3], data4=str(data[3])[2:-3],
                            data5=str(data[4])[2:-3])  # 加入变量传递
 
-if __name__ == "__main__":
-    app.run(port=2020, host="127.0.0.1", debug=True)
+#if __name__ == "__main__":
+#    app.run(port=2020, host="127.0.0.1", debug=True)

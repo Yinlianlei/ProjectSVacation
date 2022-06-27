@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ name }}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'consult.css') }}">
+        <script src="{{ url_for('static', filename='consult.js') }}"></script>
+    </head>
+    <body>
+        <div id="consult_nav"><!-- 导航栏 -->
+            <!-- 需要全局导航 -->
+        </div>
+        <div id="consult_question" class="consult_frame">
+            <form method="POST" action="/consult">
+                <textarea type="text" id="consult_question_text" placeholder="请描述您的病症" name="question_text"></textarea>
+                <input onclick="" type="submit" value="submit"> 
+            </form>
+        </div>
+        <div id="consult_answer" class="consult_frame">
+            <ul>
+                <li class="consult_list">
+                    <div class="consult_doctorAnswer" name="consult_doctorAnswer_div">
+                        <div class="consult_doctorInfo">
+                            <table>
+                                <td>
+                                    <th>
+                                        {% if doctor %}
+                                            <img class="avatar" src="{{ url_for('static',filename=doctor) }}">
+                                            <!-- 参数使用时可以直接使用 -->
+                                        {% else %}
+                                            <img class="avatar" src="{{ url_for('static',filename=('1.png')) }}">
+                                        {% endif %}
+                                    </th>
+                                    <th>
+                                        <h1>11111</h1>
+                                    </th>
+                                </td>
+                            </table>
+                        </div>
+                        <div class="consult_doctorAnswer_text_div">
+                            <textarea type="text" name="consult_answer_text" class="consult_doctor_answer_text" readonly></textarea>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>
