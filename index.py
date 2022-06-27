@@ -269,8 +269,38 @@ def consult():
         pass
 
     response = make_response(render_template('consult.html', name="test consult",res=res,doctor="1.png",navList = navList))
-    
+    # 设置响应头
+    #response.headers['user_type'] = 'doctor'
+    #response.headers['user_id'] = '114514'
+
+    # 设置cookie
+    #response.set_cookie("user_type","doctor",path="/test/")
+    #response.set_cookie("user_id","114514")
+
     return response
+
+
+
+'''
+# template for page
+@app.route('/',methods=['POST','GET'])
+def test():
+    global navList
+    res = ""
+    # html的响应方式，POST和GET，此处大写html必须大写
+    # 具体参数获取方式看request
+    if request.method == 'POST':
+        pass
+    if request.method == 'GET':
+        pass
+
+    response = make_response(render_template('文件.html',navList = navList))#后面接上传递给html的变量 #name="test consult",res=res,doctor="1.png"))
+    
+    response.
+
+    return response
+'''
+
 
 if __name__ == "__main__":
     initSql()
