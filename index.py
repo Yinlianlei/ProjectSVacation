@@ -11,6 +11,10 @@ from sqlalchemy import null
 # declear and init mysql
 db = null
 neo = null
+
+# 导航栏全局变量
+navList = {"home":"/","login":"/login"}
+
 def initSql():
     with open("./static/sql.json","r") as f:
         try:
@@ -257,13 +261,14 @@ def response():
 # Question & answer
 @app.route('/consult',methods=['POST','GET'])
 def consult():
+    global navList
     res = ""
     if request.method == 'POST':
         print(request.form['question_text'])
     if request.method == 'GET':
         pass
 
-    response = make_response(render_template('consult.html', name="test consult",res=res,doctor="1.png"))
+    response = make_response(render_template('consult.html', name="test consult",res=res,doctor="1.png",navList = navList))
     
     return response
 

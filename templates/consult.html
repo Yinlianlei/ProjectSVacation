@@ -6,8 +6,13 @@
         <script src="{{ url_for('static', filename='consult.js') }}"></script>
     </head>
     <body>
-        <div id="consult_nav"><!-- 导航栏 -->
+        <div id="consult_nav" class="consult_frame"><!-- 导航栏 -->
             <!-- 需要全局导航 -->
+            <nav>
+                {% for i in navList %}
+                    <a href="{{ navList[i] }}">{{ i }}</a>
+                {% endfor %}
+            </nav>
         </div>
         <div id="consult_question" class="consult_frame">
             <form method="POST" action="/consult">
@@ -31,6 +36,7 @@
                                         {% endif %}
                                     </th>
                                     <th>
+                                        <!-- doctor Info list -->
                                         <h1>11111</h1>
                                     </th>
                                 </td>
