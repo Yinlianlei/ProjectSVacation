@@ -294,7 +294,7 @@ def test():
     if request.method == 'GET':
         pass
 
-    response = make_response(render_template('文件.html',navList = navList))#后面接上传递给html的变量 #name="test consult",res=res,doctor="1.png"))
+    response = make_response(render_template('文件.html',navList = navList,name="test for template"))#后面接上传递给html的变量 #name="test consult",res=res,doctor="1.png"))
     
     response.
 
