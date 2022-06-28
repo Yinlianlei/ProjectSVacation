@@ -1,0 +1,57 @@
+.consult_frame{
+    padding-left: 10%;
+    padding-right: 10%;
+    width: auto;
+}
+
+body{
+    display: grid;
+    grid-template-rows: 10% 30% auto;
+}
+
+.consult_list {
+    list-style: none;
+}
+
+#consult_question_text{
+    height: 200px;
+    width: 100%;
+    overflow: auto;/* 属性规定当内容溢出元素框时发生的事情 */
+    word-break: break-all; /*解决兼容问题*/
+    text-align: left;
+    resize: none;/* 不可拖动 */
+}
+
+.consult_doctorAnswer {
+    height: 200px;
+    width: 100%;
+    overflow: auto;/* 属性规定当内容溢出元素框时发生的事情 */
+    word-break: break-all; /*解决兼容问题*/
+    padding-top: 3%;
+}
+
+ul{
+    padding-left: 0%;
+}
+
+.avatar{
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+    overflow: hidden;
+    object-fit: cover;/* 只显示图片中间区域 */
+}
+
+.consult_doctorAnswer_text_div{
+    width: 100%;
+}
+
+.consult_doctor_answer_text{
+    height: auto;
+    width: 100%;
+    overflow: 100%;/* 属性规定当内容溢出元素框时发生的事情 */
+    word-break: break-all; /*解决兼容问题*/
+    text-align: left;
+    resize: none;/* 不可拖动 */
+    box-sizing:border-box;
+}
