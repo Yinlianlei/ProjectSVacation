@@ -1,10 +1,12 @@
 from crypt import methods
-from flask import Flask,render_template,make_response,request
+from flask import Flask,render_template,make_response,request,url_for
 from wsgiref.simple_server import make_server
 import MySQLdb as sql
 from py2neo import Graph,Node,Relationship,Subgraph
 import json
 import numpy as np
+import os
+import jieba
 
 from sqlalchemy import null
 
@@ -215,7 +217,18 @@ def processNodes():
         except Exception as e:
             print(e)
             print(i)
-            
+
+
+# load dict for jieba
+def cutLoad():
+    for i,j,k in os.walk('./dict/'):
+        for l in k:
+            jieba.load_userdict("./dict/"+l)
+
+# use cut
+def cutString(input):
+    result = jieba.lcut_for_search(input)
+    return result
 
 #for page   
 app = Flask(__name__)
@@ -270,14 +283,6 @@ def consult():
 
     response = make_response(render_template('consult.html', name="test consult",res=res,doctor="1.png",navList = navList))
     # 设置响应头
-    #response.headers['user_type'] = 'doctor'
-    #response.headers['user_id'] = '114514'
-
-    # 设置cookie
-    #response.set_cookie("user_type","doctor",path="/test/")
-    #response.set_cookie("user_id","114514")
-
-    return response
 
 @app.route('/AI',methods=['POST','GET'])
 def AI():
@@ -287,6 +292,7 @@ def AI():
     # 等待分词处理
     if request.method == 'POST':
         result = request.form['AI_question']
+        result = cutString(result)
     if request.method == 'GET':
         pass
 
@@ -318,6 +324,7 @@ def test():
 
 if __name__ == "__main__":
     initSql()
+    cutLoad()
     #command4neo()
     #processJson()
     #processNodes()
