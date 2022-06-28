@@ -279,6 +279,20 @@ def consult():
 
     return response
 
+@app.route('/AI',methods=['POST','GET'])
+def AI():
+    global navList
+    res = ""
+    result = "waiting....."
+    # 等待分词处理
+    if request.method == 'POST':
+        result = request.form['AI_question']
+    if request.method == 'GET':
+        pass
+
+    response = make_response(render_template('AI.html', name="test consult",res=res,doctor="1.png",navList = navList,result=result))
+
+    return response
 
 
 '''
