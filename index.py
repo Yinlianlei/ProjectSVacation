@@ -1,7 +1,10 @@
+from platform import node
 from flask import Flask,render_template,make_response,request
 from wsgiref.simple_server import make_server
 import MySQLdb as sql
-from py2neo import Graph,Node,Relationship,Subgraph
+from py2neo import Graph
+from pyecharts.charts import Graph as Graph2
+from pyecharts import options as opts
 import pandas as pd
 import json
 import numpy as np
@@ -39,7 +42,7 @@ def initNeo():
                         data["neo4j"]['user'],
                         data["neo4j"]['password']))
         except Exception as e:
-            print(e.with_traceback())
+            print(e)
 
 # execute sql
 def command4mysql():
@@ -77,20 +80,65 @@ def execute4mysql(command):
         print(i)
         db.rollback()
 
-# get symptom
-# input: symptom of disease
-# return: dict(information of Dosease)
-def execute4neo(symptom):
+# get info from symptom
+#input: info of disease
+#return: list[]
+def getDiseaseFromSymptom(symptom):
     global neo
-    data = neo.run("MATCH (n)-[r]-(m:Disease{name:\""+symptom+"\"}) RETURN n,r LIMIT 250").to_data_frame()
-    print(data)
-    dataDict = {}
-    for i in range(len(data['n'])):
-        dataDict[dict(data.iloc[i,1])['name']] = []
-    for i in range(len(data['n'])):
-        dataDict[dict(data.iloc[i,1])['name']].append(dict(data.iloc[i,0])['name'])
+    data = neo.run("MATCH (n:Symptom{name:\""+symptom+"\"})-[r]-(m:Disease) RETURN m LIMIT 250").to_data_frame()
+    
+    dataDict = []
+    
+    for i in data['m']:
+        dataDict.append(dict(i)['name'])
 
     return dataDict
+
+# get disease
+# input: symptom of disease
+# return: dict(information of Dosease)
+def getInfoOfDisease(Disease):
+    global neo
+    data = neo.run("MATCH (n)-[r]-(m:Disease{name:\""+Disease+"\"}) RETURN n,r LIMIT 250").to_data_frame()
+    dataDict = {}
+    #print(data)
+    for i in range(len(data['n'])):
+        dataDict[dict(data.iloc[i,0])['name']] = dict(data.iloc[i,1])['name']
+
+    return dataDict
+
+def process4echarts(root,data):
+    category = ["病症"]
+    for i in data:
+        if data[i] not in category:
+            category.append(data[i])
+    rootNode = {"name":root , "symbolSize": 30,"category":0}
+    nodes = [{"name":i,"symbolSize": 30,"category":category.index(data[i])} for i in data]
+
+    category = [{"name":i} for i in category]
+
+    nodes.insert(0,rootNode)
+    links = [
+        {"source": root, "target": i,"value":data[i]} for i in data
+    ]
+
+    c = (
+        Graph2()
+        .add("", nodes, links,category, repulsion=8000,
+            #linestyle_opts=opts.LineStyleOpts(color="red"),
+            label_opts=opts.LabelOpts(position="right"),
+            edge_label=opts.LabelOpts(
+                is_show=True, position="middle", formatter="{c}"
+            )
+            
+        )
+        .set_global_opts(title_opts=opts.TitleOpts(title=root+"-知识图谱"),
+        legend_opts=opts.LegendOpts(orient="vertical", pos_left="2%", pos_top="20%"))
+    )
+    c.width = "600px"
+    c.height = "600px"
+    return c.render_embed()
+
 
 # function for login
 def mysql4login(phone,pwd):
@@ -188,8 +236,18 @@ def AI():
         result = cutString(result)
     if request.method == 'GET':
         pass
+    
+    data = getInfoOfDisease("减压病")
+    re = process4echarts("减压病",data)
 
-    response = make_response(render_template('AI.html', name="test consult",res=res,doctor="1.png",navList = navList,result=result))
+    response = make_response(render_template('AI.html', 
+                                        name="test consult",
+                                        res=res,
+                                        doctor="1.png",
+                                        navList = navList,
+                                        result=result,
+                                        re=re)
+                            )
 
     return response
 
@@ -218,9 +276,20 @@ def test():
 if __name__ == "__main__":
     #initSql()
     initNeo()
-    execute4neo()
+
+    #data = getInfoOfDisease("减压病")
+    #print(data)
+    #data = getDiseaseFromSymptom("瘙痒")
+    #print(data)
+
+    server = make_server('127.0.0.1', 5000, app)
+    server.serve_forever()
+    app.debug = True
+    app.run()
+
+
+    
     #cutLoad()
-    #getDisser("肺炎球菌肺炎")
     #command4neo()
     #processJson()
     #processNodes()
@@ -229,10 +298,7 @@ if __name__ == "__main__":
 
     #execute4mysql("select * from userinfo")
 
-    #server = make_server('127.0.0.1', 5000, app)
-    #server.serve_forever()
-    #app.debug = True
-    #app.run()
+    
     
 
 '''
