@@ -1,18 +1,16 @@
-from crypt import methods
-from flask import Flask,render_template,make_response,request,url_for
+from flask import Flask,render_template,make_response,request
 from wsgiref.simple_server import make_server
 import MySQLdb as sql
 from py2neo import Graph,Node,Relationship,Subgraph
+import pandas as pd
 import json
 import numpy as np
 import os
 import jieba
 
-from sqlalchemy import null
-
 # declear and init mysql
-db = null
-neo = null
+db = ""
+neo = ""
 
 # 导航栏全局变量
 navList = {"home":"/","login":"/login"}
@@ -79,6 +77,20 @@ def execute4mysql(command):
         print(i)
         db.rollback()
 
+# get symptom
+# input: symptom of disease
+# return: dict(information of Dosease)
+def execute4neo(symptom):
+    global neo
+    data = neo.run("MATCH (n)-[r]-(m:Disease{name:\""+symptom+"\"}) RETURN n,r LIMIT 250").to_data_frame()
+    print(data)
+    dataDict = {}
+    for i in range(len(data['n'])):
+        dataDict[dict(data.iloc[i,1])['name']] = []
+    for i in range(len(data['n'])):
+        dataDict[dict(data.iloc[i,1])['name']].append(dict(data.iloc[i,0])['name'])
+
+    return dataDict
 
 # function for login
 def mysql4login(phone,pwd):
@@ -99,125 +111,6 @@ def mysql4login(phone,pwd):
         # 如果发生错误则回滚
         print(e)
         db.rollback()
-
-def test4neo():
-    #node1 = Node("Person",name="test1")
-    #node2 = Node("Person",name="test2")
-    #r = Relationship(node1,"wifi",node2)
-    #neo.create(r)
-    global neo
-    # node
-    # data = neo.run("MATCH (n) RETURN n LIMIT 25").to_table()
-    # relationship
-    data = neo.run("MATCH ()-[r]->() RETURN r LIMIT 20").data()
-    print(data)
-    
-#create nodes.json
-def processJson():
-    with open('./static/medical.json','r') as f:
-        testList = []
-        try:
-            for i in f.readlines():
-                txt = json.loads(i)
-                txt = txt['category']
-                if txt == []:
-                    continue
-                if len(txt) == 1:
-                    testList.append(txt[0])
-                    continue
-                elif len(txt) == 2:
-                    testList.append(str(txt[1]))
-                    continue
-                testList.append(str(txt[1])+":"+str(txt[2]))
-            testList = np.unique(testList)
-            print(testList)
-        except:
-            print(i)
-
-        nodes = {"疾病百科":[]}
-        for i in testList:
-            txt = i.split(":")
-            if len(txt) == 1:
-                nodes["疾病百科"].append({i:[]})
-            else:
-                nodes["疾病百科"].append({txt[0]:txt[1]})
-        
-        print(nodes)
-        nodes = json.dumps(nodes,ensure_ascii=False)
-        with open('./static/node.json','w') as f:
-            f.write(nodes)
-
-#add node dor neo4j
-def addNode1(nodeList,relationList,rootNode,nodes,nodeName,method="-"):
-    if nodeName not in nodes:
-        return nodeList,relationList
-    nodeSym = Node(nodeName,name=nodeName)
-    for j in nodes[nodeName]:
-        node = Node(nodeName[:4],name=j)
-        relationList.append(Relationship(nodeSym,method,node))
-        nodeList.append(node)
-    nodeList.append(nodeSym)
-    relationList.append(Relationship(rootNode,nodeName,nodeSym))
-    return nodeList,relationList
-
-def addNode2(nodeList,relationList,rootNode,nodes,nodeName,method="-"):
-    if nodeName not in nodes:
-        return nodeList,relationList
-    node = [Node(nodeName,name=j) for j in nodes[nodeName]]
-    for j in node:
-        nodeList.append(j)
-    for j in range(1,len(node)):
-        relationList.append(Relationship(node[j-1],method,node[j]))
-    relationList.append(Relationship(rootNode,nodeName,node[0]))
-    return nodeList,relationList
-
-def processNodes():
-    with open("./static/medical.json",'r') as f:
-        global neo
-        nodes = f.read()
-        #print(nodes)
-        nodes = json.loads(nodes)
-        #neo.create(nodeRoot)
-        try:
-            for i in nodes:
-                createNode = []
-                createRelation = []
-                nodeDisser = Node("disser",name=i['name'])
-                nodeLabelList = ["yibao_status",'get_prob','get_way','cure_lasttime','cured_prob','desc']
-                for j in nodeLabelList:
-                    if j in i:
-                        nodeDisser.add_label(j)
-                createNode.append(nodeDisser)
-
-                nodePrevent = Node("preventNode",name="preventNode")
-                for j in i['prevent'].split('\n'):
-                    node = Node('prevent',method=j)
-                    createRelation.append(Relationship(nodePrevent,"method",node))
-                    createNode.append(node)
-                createNode.append(nodePrevent)
-                createRelation.append(Relationship(nodeDisser,"prevent",nodePrevent))
-
-                createNode,createRelation = addNode2(createNode,createRelation,nodeDisser,i,'category')
-                createNode,createRelation = addNode2(createNode,createRelation,nodeDisser,i,'cure_department')
-
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'symptom')
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'acompany')
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'check')
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'cure_way','method')
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'do_eat')
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'not_eat')
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'recommand_eat')
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'recommand_drug')
-                createNode,createRelation = addNode1(createNode,createRelation,nodeDisser,i,'drug_detail')
-            
-                sub = Subgraph(createNode,createRelation)
-                t = neo.begin()
-                t.create(sub)
-                neo.commit(t)
-        except Exception as e:
-            print(e)
-            print(i)
-
 
 # load dict for jieba
 def cutLoad():
@@ -323,8 +216,11 @@ def test():
 
 
 if __name__ == "__main__":
-    initSql()
-    cutLoad()
+    #initSql()
+    initNeo()
+    execute4neo()
+    #cutLoad()
+    #getDisser("肺炎球菌肺炎")
     #command4neo()
     #processJson()
     #processNodes()
@@ -333,10 +229,10 @@ if __name__ == "__main__":
 
     #execute4mysql("select * from userinfo")
 
-    server = make_server('127.0.0.1', 5000, app)
-    server.serve_forever()
-    app.debug = True
-    app.run()
+    #server = make_server('127.0.0.1', 5000, app)
+    #server.serve_forever()
+    #app.debug = True
+    #app.run()
     
 
 '''
