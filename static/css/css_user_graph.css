@@ -1,4 +1,27 @@
-#user_graph_content{
+#user_graph_content_div{
+    display: grid;
+    grid-template-columns: 5% auto;
+}
+
+/* for nav */
+#user_graph_div{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+/* for category */
+#user_graph_category{
+    width: auto;
+}
+#user_graph_echarts{
+    padding-left: 5%;
+    padding-right: 5%;
+    width: auto;
+}
+
+#user_graph_content{
+    display: grid;
+    grid-template-columns: auto auto;/*20% 80%;*/
 }

@@ -6,19 +6,40 @@ from sqlconn import *
 
 app = Flask(__name__)
 
-handler = ""#ChatBotGraph()
+handler = ChatBotGraph()
 initNeo()
 
 
 @app.route('/user_graph/<userid>',methods=['POST', 'GET'])
 def graph(userid):
-   navList = [{"name":'医药问答',"url":"/user_AIqa/"+str(userid)},{"name":'线上问诊',"url":"/user_docqa/"+str(userid)},{"name":'信息修改',"url":"/user_infochange/"+str(userid)},{"name":'我的收藏',"url":"/user_history/"+str(userid)},{"name":'意见反馈',"url":"/user_comment/"+str(userid)},{"name":'知识图谱',"url":"/user_graph/"+str(userid)}]
+   navList = [
+      {"name":'医药问答',"url":"/user_AIqa/"+str(userid)},
+      {"name":'线上问诊',"url":"/user_docqa/"+str(userid)},
+      {"name":'信息修改',"url":"/user_infochange/"+str(userid)},
+      {"name":'我的收藏',"url":"/user_history/"+str(userid)},
+      {"name":'意见反馈',"url":"/user_comment/"+str(userid)},
+      {"name":'知识图谱',"url":"/user_graph/"+str(userid)}
+   ]
 
    grap = selectDisease("")
    
    return make_response(render_template('user_graph.html', navList = navList,grap=grap))
 
 
+#打开医生问答
+@app.route('/user_docqa/<userid>',methods = ['POST', 'GET'])
+def useraskdoc(userid):
+   if request.method == 'GET':
+
+
+      return render_template('user_doctorqa.html')
+
+#医生登录后打开问诊问答主网页
+@app.route('/doctor_userqa/<userid>',methods = ['POST', 'GET'])
+def doctouserqa(userid):
+   if request.method == 'GET':
+
+      return render_template('doctor_userqa.html')
 
 #默认页面
 @app.route('/')
@@ -61,6 +82,8 @@ def usertoaiqa(userid):
       user_text = request.form.get('tt2')
       res=texttomysql(user_id, user_text)
 
+      res = handler.chat_main(user_text)
+
       #todo 和king对接
       #todo 第四张词云图
       #todo 用户导航栏
@@ -98,15 +121,6 @@ def usercomment(userid):
          data="wait"
       return data
 
-#打开医生问答
-@app.route('/user_docqa/<userid>',methods = ['POST', 'GET'])
-def useraskdoc(userid):
-   if request.method == 'GET':
-
-
-      return render_template('user_doctorqa.html')
-   # if request.method == 'POST':
-   #    print('hhh')
 
 #打开信息修改
 @app.route('/user_infochange/<userid>',methods = ['POST', 'GET'])
@@ -229,15 +243,6 @@ def doc_login():
       else:
          data="tryagain"
          return data
-
-
-
-#医生登录后打开问诊问答主网页
-@app.route('/doctor_userqa/<userid>',methods = ['POST', 'GET'])
-def doctouserqa(userid):
-   if request.method == 'GET':
-
-      return render_template('doctor_userqa.html')
 
 #打开医生信息修改网页
 @app.route('/doctor_infochange/<userid>',methods = ['POST', 'GET'])

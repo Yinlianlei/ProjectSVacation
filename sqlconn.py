@@ -263,6 +263,48 @@ def adminlog(user_pnum,user_pwd):
 # </editor-fold>
 
 
+# <editor-fold desc="管理员登录">
+def doclog(user_pnum,user_pwd):
+    """
+
+    :param user_pnum:
+    :param user_pwd:
+    :return:
+    None:稍后重试
+    "well":密码正确登录成功
+    False:密码错误请重试
+    """
+    conn = pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cursor = conn.cursor()
+    sql = 'select doctor_psd from doctorinfo where doctor_pnum = '+str(user_pnum)
+    try:
+        cursor.execute(sql)
+        conn.commit()
+        data = cursor.fetchall()
+        if data[0][0]==str(user_pwd):
+            cursor.close()  # 关闭游标
+            conn.close()  # 关闭连接
+            return "well"
+        else:
+            return False
+
+    except:  # 返回None
+
+        traceback.print_exc()
+        conn.rollback()
+        return None
+
+# print(userlog(12345678901,"123qweasd"))
+# </editor-fold>
+
+
+
 # <editor-fold desc="获取用户性别数据">
 def getUserData():
     """
@@ -433,6 +475,58 @@ def getUserData2():
 
 # print(getUserData2())
 # </editor-fold>
+
+# <editor-fold desc="获取用户热搜数据">
+def getUserData3():
+    """
+
+    :param user_pnum:
+    :param user_pwd:
+    :return:
+    None:稍后重试
+    "well":密码正确登录成功
+    False:密码错误请重试
+    """
+    conn = pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cursor = conn.cursor()
+    sql = 'select alluser_kw,kw_num from kw_Sta'
+    try:
+        cursor.execute(sql)
+        conn.commit()
+        res=''
+        data = cursor.fetchall()
+        # print(data)
+        if len(data[0])!=0:
+            res = str(data[0][0])+','+str(data[0][1])
+            for i in range(1,len(data)):
+                res=res+','+ str(data[i][0])+','+str(data[i][1])
+            # res=res+str(int(data[0][0]))
+            # # print(res)
+            # res = res+','+ str(int(data[0][1]))
+
+            # print(res)
+            cursor.close()  # 关闭游标
+            conn.close()  # 关闭连接
+            return res
+        else:
+            return False
+
+    except:  # 返回None
+
+        traceback.print_exc()
+        conn.rollback()
+        return False
+
+# print(getUserData3())
+# </editor-fold>
+
+
 
 # <editor-fold desc="获取用户的总评分">
 def getavgscore():
@@ -656,8 +750,22 @@ def histmysql(user_pnum,user_askhist):
 # histmysql("12345678901","我感觉有点头痛怎么办")
 # </editor-fold>
 
-
-
+# 
+def getmysql():
+    conn=pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cur = conn.cursor()  # 创建游标对象
+    sql = 'select * from userinfo'
+    cur.execute(sql)  # 执行sql语句
+    data = cur.fetchall()
+    print(data)
+    cur.close()  # 关闭游标
+    conn.close() # 关闭连接
 
 
 

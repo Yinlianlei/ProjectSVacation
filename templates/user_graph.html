@@ -21,29 +21,36 @@
     <use class="text" xlink:href="#id"></use>
     </svg>
     <div id="title">医药问答系统</div>
-    <div class="container">
-        <div class="screen">
-        <div id="subtitle">
-            <span id="subtitlespan">我的收藏</span>
-        </div>
-        <!-- 导航栏 -->
-        <div class="main" id="commentguide">
-            {% for i in navList %}
-            <div class="nav">
-                <div class="a">
-                    <a href="{{ i['url'] }}">
-                    <span class="span" id="bg1">{{ i['name'] }}</span>
-                    </a>
+    <div id="user_graph_content_div">
+        <div id="user_graph_div">
+            <!-- 导航栏 -->
+            <div id="user_graph_commentguide">
+                {% for i in navList %}
+                <div class="user_graph_nav">
+                    <div class="user_graph_a">
+                        <a href="{{ i['url'] }}">
+                        <span class="user_graph_span">{{ i['name'] }}</span>
+                        </a>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-
-        <div id="user_graph_content">
-            <div id="user_graph_echarts">{{ grap | safe}}</div>
-        </div>
-  
-     </div>
+        <div class="container">
+            <div class="screen">
+            <div id="subtitle">
+                <span id="subtitlespan">我的收藏</span>
+            </div>
+            
+            
+    
+            <div id="user_graph_content">
+                <div id="user_graph_category"></div>
+                <div id="user_graph_echarts">{{ grap | safe}}</div>
+            </div>
+      
+         </div>
+    </div>
   </div>
 
 

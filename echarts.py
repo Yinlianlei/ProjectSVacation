@@ -27,34 +27,39 @@ def getInfoOfDisease(Disease):
     return dataDict
 
 def process4echarts(root,data):
-    category = ["病症"]
+    category = ["病症","信息"]
     for i in data:
         if data[i] not in category:
             category.append(data[i])
     rootNode = {"name":root , "symbolSize": 30,"category":0}
-    nodes = [{"name":i,"symbolSize": 30,"category":category.index(data[i])} for i in data]
 
-    category = [{"name":i} for i in category]
+    nodesCategory = [{"name":i,"symbolSize": 30,"category":1} for i in category[2:]]
 
-    nodes.insert(0,rootNode)
-    links = [
-        {"source": root, "target": i,"value":data[i]} for i in data
-    ]
+    links = [{"source": root, "target": i,"value":"1"} for i in category[2:]]
+
+    nodes =  nodesCategory
+
+    #nodes = [{"name":i,"symbolSize": 30,"category":category.index(data[i])} for i in data]
+    #category = [{"name":i} for i in category]
+    #nodes.insert(0,rootNode)
+    #links = [
+    #    {"source": root, "target": i,"value":data[i]} for i in data
+    #]
 
     c = (
         Graph2()
         .add("", nodes, links,category, repulsion=8000,
             #linestyle_opts=opts.LineStyleOpts(color="red"),
-            label_opts=opts.LabelOpts(position="right"),
+            label_opts=opts.LabelOpts(position="bottom"),
             edge_label=opts.LabelOpts(
                 is_show=True, position="middle", formatter="{c}"
             )
             
         )
         .set_global_opts(title_opts=opts.TitleOpts(title=root+"-知识图谱"),
-        legend_opts=opts.LegendOpts(orient="vertical", pos_left="2%", pos_top="20%"))
+        legend_opts=opts.LegendOpts(orient="horizontal", pos_left="center", pos_top="5%"))
     )
-    c.width = "600px"
+    c.width = "800px"
     c.height = "600px"
     return c.render_embed()
 
