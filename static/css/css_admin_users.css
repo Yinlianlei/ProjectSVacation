@@ -24,4 +24,11 @@
 	left: 100px;
 	top: 450px;
 }
-
+.picture4 {
+	width: 1000px;
+	height: 700px;
+	background-color: white;
+	position: absolute;
+	left: 100px;
+	top: 1200px;
+}

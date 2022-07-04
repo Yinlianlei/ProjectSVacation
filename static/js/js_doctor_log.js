@@ -14,3 +14,19 @@ function loginChange(){
     }
 }
 
+$(function() {
+       $("#doctologin").on('click',function(){
+          var form1 = $("#doc_pnum").val();
+          var form2 = $("#passwordInput").val();
+          $.post('/doclogin',data={'tt1':form1,'tt2':form2},function(ret){
+
+            if(ret==='tryagain'){
+              alert("密码错误请重新输入");}
+            else if(ret==='error'){
+              alert("请稍后重试"); }
+            else{
+              window.location.href="./doctor_userqa/"+form1;
+            }
+          })
+       });
+});

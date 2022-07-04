@@ -9,7 +9,7 @@
 <script type="text/javascript" src="../static/js/jquery-1.8.0.min.js"></script>
 <script type="text/javascript" src="../static/js/startScore.js"></script>
 <script type="text/javascript" src="../static/js/recoder.js"></script>
-<script type="text/javascript" src="../static/js/js_user_doctorqa.js"></script>
+<script type="text/javascript" src="../static/js/js_doctor_userqa.js"></script>
 
 <style>
     *{
@@ -254,47 +254,41 @@
 
 
      <div id="subtitle">
-      <span id="subtitlespan">AI医药问答</span>
+      <span id="subtitlespan">线上坐诊</span>
      </div>
 
 
      <!-- 导航栏 -->
      <div class="main" id="commentguide">
-      <div class="nav">
-         <div class="a">
-          <a onclick="herfChange0()">
-          <span class="span" id="bg1">医药问答</span>
-          </a>
-         </div>
-      </div>
+
       <div class="nav">
          <div class="a">
           <a href="">
-          <span class="span" id="bg2">线上问诊</span>
+          <span class="span" id="bg2">线上坐诊</span>
           </a>
          </div>
       </div>
       <div class="nav">
          <div class="a">
           <a onclick="herfChange2()">
-          <span class="span" id="bg3">信息修改</span>
+          <span class="span" id="bg3">坐诊统计</span>
           </a>
          </div>
       </div>
       <div class="nav">
          <div class="a">
           <a onclick="herfChange3()">
-          <span class="span" id="bg4">我的收藏</span>
+          <span class="span" id="bg4">信息修改</span>
           </a>
          </div>
       </div>
-      <div class="nav">
-         <div class="a">
-          <a onclick="herfChange4()">
-          <span class="span" id="bg5">意见反馈</span>
-          </a>
-         </div>
-      </div>
+<!--      <div class="nav">-->
+<!--         <div class="a">-->
+<!--          <a onclick="herfChange4()">-->
+<!--          <span class="span" id="bg5">意见反馈</span>-->
+<!--          </a>-->
+<!--         </div>-->
+<!--      </div>-->
       </div>
 
 <!-- 对话界面—————————————————————————————————————————————————————————————————————————————————————————————————— -->
@@ -308,10 +302,10 @@
         <div class="chat_middle" id="chat_middle_item">
              <!-- 左边 -->
             <div class="chat_left clearfix">
-                <div class="chat_left_item_1 ">AI</div>
+                <div class="chat_left_item_1 ">提醒</div>
                 <div class="chat_left_item_2">
                     <div class="chat_left_content">
-                        您好，请问有什么能帮助您的吗
+                        有用户向您咨询！
                     </div>
                 </div>
             </div>
@@ -358,7 +352,7 @@
              var mm=date.getMinutes();
              var time=hour+':'+mm;
              
-             var ans='<div class="chat_right_item_1 clearfix">用户</div>'+
+             var ans='<div class="chat_right_item_1 clearfix">我</div>'+
                  '<div class="chat_right_item_2">'+
                      '<div class="chat_right_time clearfix">'+time+'</div>'+
                      '<div class="chat_right_content clearfix">'+str+'</div>'
@@ -372,7 +366,7 @@
 <!--赋值给全局变量并输出-->
                     var str2 = str.replace(/[^0-9]/ig,"");
 
-             var aians='<div class="chat_left_item_1" clearfix>AI</div>'+
+             var aians='<div class="chat_left_item_1" clearfix>用户</div>'+
                  '<div class="chat_left_item_2">'+
                      '<div class="chat_left_time" clearfix>'+time+'</div>'+
                      '<div class="chat_left_content" clearfix>'+str2+'</div>'

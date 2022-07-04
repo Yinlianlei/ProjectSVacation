@@ -40,8 +40,23 @@ window.onload=function(){
                {name: '广东',value: res[41]}, {name: '青海',value: res[42]}, {name: '西藏',value: res[43]},
                {name: '四川',value: res[44]}, {name: '宁夏',value: res[45]}, {name: '海南',value: res[46]},
                {name: '台湾',value: res[47]}, {name: '香港',value: res[48]}, {name: '澳门',value: res[49]}
-            ]
+            ];
             myChart2.setOption(option22);
+
+
+            option33 = myChart3.getOption();
+            var arrdata = [];
+            for ( var i = 50; i < res.length; i=i+2){
+                arrdata.push({name: res[i],value:res[i+1]})
+            }
+            option33.series[0].data=arrdata;
+//            option33.series[0].data=[
+//                        {name: res[],value:res[]},{name: res[],value: res[]}, {name: res[],value: res[]},
+//                        {name: res[],value: res[]}, {name: res[],value: res[]}, {name: res[],value: res[]},
+//                        {name: res[],value: res[]}, {name: res[],value: res[]}, {name: res[],value: res[]},
+//                        {name: res[],value: res[]}
+//                        ];
+            myChart3.setOption(option33);
 
 //            option22.series[0].data = yeardata1;
 //            if(ret==='wait'){
