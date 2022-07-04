@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ name }}</title>
+        <!-- 根据需要进行编写, 文件创立于/static -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'template.css') }}">
+        <script src="{{ url_for('static', filename='template.js') }}"></script>
+    </head>
+    <body>
+        <div class="template_nav"><!-- 导航栏 -->
+            <!-- 需要全局导航,navList. 此处为循环,需要开启flask服务器才可以看到效果 -->
+            <nav>
+                {% for i in navList %}
+                    <a href="{{ navList[i] }}">{{ i }}</a>
+                {% endfor %}
+            </nav>
+        </div>
+        <div>
+            <!-- 根据功能需要进行编写 -->
+        </div>
+    </body>
+</html>

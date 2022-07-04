@@ -1,0 +1,12 @@
+[
+    {
+        "name": "test1",
+        "relation": {
+            "wifi": "test2"
+        }
+    },
+    {
+        "name": "test2",
+        "relation": {}
+    }
+]

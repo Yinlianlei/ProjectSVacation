@@ -1,0 +1,50 @@
+body{
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+#AI_body{
+    display: grid;
+    grid-template-rows: auto 40%;
+}
+
+#AI_content{
+    display: grid;
+    grid-template-rows: 40% 60%;
+}
+
+#AI_info{
+    display: grid;
+    grid-template-rows: auto auto;
+}
+
+#AI_input{
+    width: 100%;
+}
+
+#text_input{
+    width: 100%;
+}
+
+#test_response{
+    transition:height 1.5s;
+}
+
+.avatar{
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+    overflow: hidden;
+    object-fit: cover;/* 只显示图片中间区域 */
+}
+
+.AI_text {
+    resize: none;
+    width: 100%;
+    box-sizing:border-box;
+}
+
+#echarts{
+    height: 600px;
+    width: 600px;
+}
