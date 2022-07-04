@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>医疗系统</title> 
+</head>
+<link rel="stylesheet" type="text/css" href="../static/css/css_all_bg.css">
+<link rel="stylesheet" type="text/css" href="../static/css/css_user_history.css">
+<script type="text/javascript" src="../static/js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="../static/js/startScore.js"></script>
+<script type="text/javascript" src="../static/js/js_user_history.js"></script>
+<body>
+  <svg id="allogo" height="60" width="50">
+    <symbol id="id">
+      <text dy="1em">AI</text>
+    </symbol>
+    <use class="text" xlink:href="#id"></use>
+    <use class="text" xlink:href="#id"></use>
+    <use class="text" xlink:href="#id"></use>
+    <use class="text" xlink:href="#id"></use>
+    <use class="text" xlink:href="#id"></use>
+  </svg>
+
+ <div id="title">医药问答系统</div>
+  <div class="container">
+    <div class="screen">
+
+
+     <div id="subtitle">
+      <span id="subtitlespan">我的收藏</span>
+     </div>
+
+
+     <!-- 导航栏 -->
+     <div class="main" id="commentguide">
+      <div class="nav">
+         <div class="a">
+          <a onclick="herfChange0()">
+          <span class="span" id="bg1">医药问答</span>
+          </a>
+         </div>
+      </div>
+      <div class="nav">
+         <div class="a">
+          <a onclick="herfChange1()">
+          <span class="span" id="bg2">线上问诊</span>
+          </a>
+         </div>
+      </div>
+      <div class="nav">
+         <div class="a">
+          <a onclick="herfChange2()">
+          <span class="span" id="bg3">信息修改</span>
+          </a>
+         </div>
+      </div>
+      <div class="nav">
+         <div class="a">
+          <a href="">
+          <span class="span" id="bg4">我的收藏</span>
+          </a>
+         </div>
+      </div>
+      <div class="nav">
+         <div class="a">
+          <a onclick="herfChange4()">
+          <span class="span" id="bg5">意见反馈</span>
+          </a>
+         </div>
+      </div>
+      </div>
+
+        <div class="content" >
+           <span  id="userfed1">
+               {{user_history0}}
+           </span>
+        </div>
+        <div class="content" >
+           <span id="userfed2">
+               {{user_history1}}
+           </span>
+        </div>
+        <div class="content" >
+           <span id="userfed3">
+               {{user_history2}}
+           </span>
+        </div>
+        <div class="content" >
+           <span id="userfed4">
+               {{user_history3}}
+           </span>
+        </div>
+        <div class="content" >
+           <span id="userfed5">
+               {{user_history4}}
+           </span>
+        </div>
+
+  
+     </div>
+  </div>
+
+
+                              
+</body>
+</html>

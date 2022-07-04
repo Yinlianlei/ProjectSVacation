@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>医疗系统</title> 
+</head>
+<link rel="stylesheet" type="text/css" href="../static/css/css_admin_users_bg.css">
+<link rel="stylesheet" type="text/css" href="../static/css/css_admin_users.css">
+<script type="text/javascript" src="../static/js/jquery-1.8.0.min.js"></script>
+
+<script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js?v=1598903772045"></script>
+<script type="text/javascript" src="../static/js/js_admin_users.js"></script>
+
+<body>
+  <svg id="allogo" height="60" width="50">
+    <symbol id="id">
+      <text dy="1em">AI</text>
+    </symbol>
+    <use class="text" xlink:href="#id"></use>
+    <use class="text" xlink:href="#id"></use>
+    <use class="text" xlink:href="#id"></use>
+    <use class="text" xlink:href="#id"></use>
+    <use class="text" xlink:href="#id"></use>
+  </svg>
+
+ <div id="title">医药问答系统</div>
+  <div class="container">
+    <div class="screen">
+
+
+     <div id="subtitle">
+      <span id="subtitlespan">用户管理</span>
+     </div>
+
+
+     <!-- 导航栏 -->
+     <div class="main" id="commentguide">
+      <div class="nav">
+         <div class="a">
+          <a >
+          <span class="span" id="bg1">用户管理</span>
+          </a>
+         </div>
+      </div>
+      <div class="nav">
+         <div class="a">
+          <a onclick="herfChange1()">
+          <span class="span" id="bg2">用户反馈</span>
+          </a>
+         </div>
+      </div>
+      <div class="nav">
+         <div class="a">
+          <a onclick="herfChange()">
+          <span class="span" id="bg3">医生管理</span>
+          </a>
+         </div>
+      </div>
+
+      </div>
+
+
+
+   <!-- ECharts柱状图 -->
+<div id="p1" class="picture1" >
+   <script type="text/javascript">
+     // 基于准备好的dom，初始化echarts实例
+     var myChart = echarts.init(document.getElementById('p1'));
+
+     // 指定图表的配置项和数据
+     var option;
+
+option = {
+ title: {
+   text: '男女年龄比例'
+ },
+ tooltip: {
+   trigger: 'axis',
+   axisPointer: {
+     type: 'shadow'
+   }
+ },
+ legend: {},
+ grid: {
+   left: '3%',
+   right: '4%',
+   bottom: '3%',
+   containLabel: true
+ },
+ xAxis: {
+   type: 'value',
+   boundaryGap: [0, 0.01]
+ },
+ yAxis: {
+   type: 'category',
+   data: ['0-10', '10-20', '20-30', '30-40', '40-50', '50-60','>60']
+ },
+ series: [
+   {
+     name: '男',
+     type: 'bar',
+     data: [0, 0, 0, 0, 0, 0, 0]
+   },
+   {
+     name: '女',
+     type: 'bar',
+     data: [0, 0, 0, 0, 0, 0, 0]
+   }
+
+ ]
+};
+option && myChart.setOption(option);
+   </script>
+    </div>
+
+
+
+
+
+   <!-- ECharts饼状图 -->
+   <div id="p2" class="picture2" >
+   <script type="text/javascript">
+     // 基于准备好的dom，初始化echarts实例
+     var myChart1 = echarts.init(document.getElementById('p2'));
+
+     // 指定图表的配置项和数据
+     var option1;
+
+option1 = {
+ title: {
+   text: '男女性别比例',
+   left: 'center'
+ },
+ tooltip: {
+   trigger: 'item'
+ },
+ legend: {
+   orient: 'vertical',
+   left: 'left'
+ },
+ series: [
+   {
+     name: 'Access From',
+     type: 'pie',
+     radius: '50%',
+     data: [
+       { value: 0, name: '男' },
+       { value: 0, name: '女' },
+
+     ],
+     emphasis: {
+       itemStyle: {
+         shadowBlur: 10,
+         shadowOffsetX: 0,
+         shadowColor: 'rgba(0, 0, 0, 0.5)'
+       }
+     }
+   }
+ ]
+};
+
+option1 && myChart1.setOption(option1);
+</script>
+
+</div>
+
+
+
+
+   <!-- ECharts中国地图 -->
+<div id="p3" class="picture3" >
+   
+   <script type="text/javascript">
+// 基于准备好的dom，初始化echarts实例
+var myChart2 = echarts.init(document.getElementById('p3'));
+
+// 指定图表的配置项和数据
+var option2;
+
+option2 = {
+   title: {
+       text: '用户分布地图',
+       left: 'center'
+   },
+   tooltip: {
+       trigger: 'item'
+   },
+   legend: {
+       orient: 'vertical',
+       left: 'left',
+       data: ['中国疫情图']
+   },
+   visualMap: {
+       type: 'piecewise',
+       pieces: [
+           {min: 1000, max: 1000000, label: '大于等于1000人', color: '#372a28'},
+           {min: 500, max: 999, label: '500-999人', color: '#4e160f'},
+           {min: 100, max: 499, label: '100-499人', color: '#974236'},
+           {min: 10, max: 99, label: '10-99人', color: '#ee7263'},
+           {min: 1, max: 9, label: '1-9人', color: '#f5bba7'},
+       ],
+       color: ['#E0022B', '#E09107', '#A3E00B']
+   },
+   toolbox: {
+       show: true,
+       orient: 'vertical',
+       left: 'right',
+       top: 'center',
+       feature: {
+           mark: {show: true},
+           dataView: {show: true, readOnly: false},
+           restore: {show: true},
+           saveAsImage: {show: true}
+       }
+   },
+   roamController: {
+       show: true,
+       left: 'right',
+       mapTypeControl: {
+           'china': true
+       }
+   },
+   series: [
+       {
+           name: '人数',
+           type: 'map',
+           mapType: 'china',
+           roam: false,
+           label: {
+               show: true,
+               color: 'rgb(249, 249, 249)'
+           },
+           data: [
+               {name: '北京',value: 0}, {name: '天津',value: 0}, {name: '上海',value: 0}, {name: '重庆',value: 0},
+               {name: '河北',value: 0}, {name: '河南',value: 0}, {name: '云南',value: 0},
+               {name: '辽宁',value: 0}, {name: '黑龙江',value: 0}, {name: '湖南',value: 0},
+               {name: '安徽',value: 0}, {name: '山东',value: 0},{name: '新疆',value: 0},
+               {name: '江苏',value: 0}, {name: '浙江',value: 0}, {name: '江西',value: 0},
+               {name: '湖北',value: 0}, {name: '广西',value: 0}, {name: '甘肃',value: 0},
+               {name: '山西',value: 0}, {name: '内蒙古',value: 0}, {name: '陕西',value: 0},
+               {name: '吉林',value: 0}, {name: '福建',value: 0}, {name: '贵州',value: 0},
+               {name: '广东',value: 0}, {name: '青海',value: 0}, {name: '西藏',value: 0},
+               {name: '四川',value: 0}, {name: '宁夏',value: 0}, {name: '海南',value: 0},
+               {name: '台湾',value: 0}, {name: '香港',value: 0}, {name: '澳门',value: 0}
+           ]
+       }
+   ]
+};
+option2 && myChart2.setOption(option2);
+   </script>
+</div>
+    
+
+
+      <!-- 几个装饰矩形 -->
+      <!-- <div class="screen__background">
+        <span class="screen__background__shape screen__background__shape4"></span>
+        <span class="screen__background__shape screen__background__shape3"></span>		
+        <span class="screen__background__shape screen__background__shape2"></span>
+        <span class="screen__background__shape screen__background__shape1"></span>
+      </div>		 -->
+    
+  </div>
+
+ </div>
+</body>
+</html>
