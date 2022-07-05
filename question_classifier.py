@@ -217,11 +217,3 @@ class QuestionClassifier:
             if wd in sent:
                 return True
         return False
-
-
-if __name__ == '__main__':
-    handler = QuestionClassifier()
-    while 1:
-        question = input('input an question:')
-        data = handler.classify(question)
-        print(data)

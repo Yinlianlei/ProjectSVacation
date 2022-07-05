@@ -3,10 +3,14 @@ from sqlconn import *
 from chat import ChatBotGraph
 from echarts import selectDisease,initNeo
 from sqlconn import *
+from asr_json import *
+# for chat
+from flask_socketio import SocketIO,emit
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
-handler = ChatBotGraph()
+handler = None
 initNeo()
 
 
@@ -29,17 +33,28 @@ def graph(userid):
 #打开医生问答
 @app.route('/user_docqa/<userid>',methods = ['POST', 'GET'])
 def useraskdoc(userid):
+   responseText = ""
    if request.method == 'GET':
-
-
-      return render_template('user_doctorqa.html')
+      docList = getOnlineDoctor()
+      responseText = docList
+   if request.method == 'POST':
+      print(request.form.get("msg"))
+      return request.form
+   
+   return render_template('user_doctorqa.html',responseText=responseText)
 
 #医生登录后打开问诊问答主网页
 @app.route('/doctor_userqa/<userid>',methods = ['POST', 'GET'])
 def doctouserqa(userid):
+   docLogin(userid)
    if request.method == 'GET':
+      pass
+   if request.method == 'POST':
+      pass
+   
+   return render_template('doctor_userqa.html')
 
-      return render_template('doctor_userqa.html')
+
 
 #默认页面
 @app.route('/')
@@ -49,6 +64,9 @@ def index():
     :return:
     用户登录页面
     """
+    global handler
+    if not isinstance(handler,ChatBotGraph):
+         handler = ChatBotGraph()
     return render_template("user_log.html")     #render_template("index.html")#,tlist=result)
 
 
@@ -78,6 +96,7 @@ def usertoaiqa(userid):
 
       return render_template('user_AIqa.html')
    if request.method == 'POST':
+      global handler
       user_id = request.form.get('tt1')
       user_text = request.form.get('tt2')
       res=texttomysql(user_id, user_text)
@@ -283,7 +302,23 @@ def regisdoc():
          data="wait"
       return data
 
+#接收录音
+@app.route('/get_speech',methods = ['POST', 'GET'])
+def speechget():
+   if request.method == 'GET':
 
+      return render_template('doctor_staqa.html')
+   if request.method == 'POST':
+      speech=request.files['upfile']
+      # speech = request.form.get('upfile')
+      # speech=speech.encode("utf-8")
+      # print(type(speech))
+      pdf_byte = speech.stream.read()
+      # print(type(pdf_byte))
+      # print(pdf_byte)
+      res=speechresult(pdf_byte)
+      # print(speech)
+      return res
 
 
 # @app.route('/hello.html', methods=['GET', 'POST'])
@@ -313,4 +348,5 @@ def regisdoc():
 
 
 if __name__ == '__main__':
-   app.run(debug = True)
+   #app.run(debug = True)
+   socketio.run(app, host="127.0.0.1", port=5000)

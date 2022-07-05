@@ -8,8 +8,9 @@
 <!--<link rel="stylesheet" type="text/css" href="../static/css/css_user_history.css">-->
 <script type="text/javascript" src="../static/js/jquery-1.8.0.min.js"></script>
 <script type="text/javascript" src="../static/js/startScore.js"></script>
-<script type="text/javascript" src="../static/js/recoder.js"></script>
 <script type="text/javascript" src="../static/js/js_user_AIqa.js"></script>
+<script src="../static/js/recoder.js"></script>
+<script src="../static/js/main.js"></script>
 
 
 <style>
@@ -324,6 +325,7 @@
             <!-- context -->
             <textarea class="chat_context" id="chat_context_item"  placeholder="请输入"></textarea>
             <div class="chat_commit" id="button">发送</div>
+            <div class="chat_commit" style="margin-left:710px;margin-top:-2px;" onmousedown="startRecording();" onmouseup="obtainRecord();" id="speechbutton">长按语音发送</div>
             <!-- <div class="chat_commit" id="voicebutton" >语音</div> -->
             <!-- <div class="contrs">
                 <input type="button" value="开始录音1516" onclick="startRecording()"/>  

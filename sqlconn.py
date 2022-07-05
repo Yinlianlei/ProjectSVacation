@@ -62,7 +62,7 @@ def gethistmysql(user_pnum):
         cursor.execute(sql)  # 执行sql语句
         data = cursor.fetchall()
         res=[]
-        for i in data[:5]:
+        for i in data[-5:]:
           res.append(i[0])
         # print('hhhhhhh')
         # print(len(res))
@@ -750,8 +750,7 @@ def histmysql(user_pnum,user_askhist):
 # histmysql("12345678901","我感觉有点头痛怎么办")
 # </editor-fold>
 
-# 
-def getmysql():
+def getOnlineDoctor():
     conn=pymysql.connect(
         host="47.98.226.235",
         port=3306,
@@ -760,16 +759,78 @@ def getmysql():
         db='flask'
     )
     cur = conn.cursor()  # 创建游标对象
-    sql = 'select * from userinfo'
+    sql = "select doctor_name,doctor_level,doctor_worktime,online_time,consult_num,doctor_pnum from doctorinfo where doctor_pnum in (select doc_phoneId from qaOnlineDoctor where `status` = 1);"
+    cur.execute(sql)  # 执行sql语句
+    data = cur.fetchall()
+    cur.close()  # 关闭游标
+    conn.close() # 关闭连接
+    return data
+
+# for doctor login and change status
+def docLogin(input):
+    conn=pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cur = conn.cursor()  # 创建游标对象
+    sql = 'update qaOnlineDoctor set `status` = 1 where doc_phoneId = \"'+input+"\";"
     cur.execute(sql)  # 执行sql语句
     data = cur.fetchall()
     print(data)
     cur.close()  # 关闭游标
     conn.close() # 关闭连接
 
+# for doctor logout and change status
+def docLogin(input):
+    conn=pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cur = conn.cursor()  # 创建游标对象
+    sql = 'update qaOnlineDoctor set `status` = 0 where doc_phoneId = \"'+input+"\";"
+    cur.execute(sql)  # 执行sql语句
+    data = cur.fetchall()
+    print(data)
+    cur.close()  # 关闭游标
+    conn.close() # 关闭连接
 
+def msgInit(inputUid,inputDid):
+    conn=pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cur = conn.cursor()  # 创建游标对象
+    sql = 'insert into qaOnline values (0,now(),\"'+inputUid+"\",\""+inputDid+"\",\"[]\",\"[]\");"
+    cur.execute(sql)  # 执行sql语句
+    data = cur.fetchall()
+    print(data)
+    cur.close()  # 关闭游标
+    conn.close() # 关闭连接
 
-
+def msgSend(input):
+    conn=pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cur = conn.cursor()  # 创建游标对象
+    sql = 'update qaOnlineDoctor set `status` = 0 where doc_phoneId = \"'+input+"\";"
+    cur.execute(sql)  # 执行sql语句
+    data = cur.fetchall()
+    print(data)
+    cur.close()  # 关闭游标
+    conn.close() # 关闭连接
 
 
 

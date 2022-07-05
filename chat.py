@@ -2,6 +2,8 @@ from question_classifier import *
 from question_parser import *
 from answer_search import *
 
+import time
+
 '''问答类'''
 class ChatBotGraph:
     def __init__(self):
@@ -20,3 +22,13 @@ class ChatBotGraph:
             return answer
         else:
             return '\n'.join(final_answers)
+
+def response(input):
+    sendTime = time.strftime("%H:%M", time.localtime()) 
+    txt = ""
+    respnseHtml = '<div class="chat_right_item_1 clearfix">用户</div>'+\
+        '<div class="chat_right_item_2">'+\
+        '<div class="chat_right_time clearfix">'+sendTime+'</div>'+\
+        '<div class="chat_right_content clearfix">'+txt+'</div>'+'</div>'
+
+    return respnseHtml
