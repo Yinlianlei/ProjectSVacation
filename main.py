@@ -5,24 +5,79 @@ from echarts import selectDisease,initNeo
 from sqlconn import *
 from asr_json import *
 # for chat
-from flask_socketio import SocketIO,emit
+from flask_socketio import SocketIO,emit,join_room,leave_room
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+client_query = []
+# the user and the doctor list
+doctorSelectByUser = {}
 
 handler = None
 initNeo()
 
 
-@app.route('/user_graph/<userid>',methods=['POST', 'GET'])
-def graph(userid):
+name_space = '/websocket'
+# emit('my_response_message', broadcasted_data, broadcast=True, namespace=name_space)  #对name_space下的所有客户端发送消息
+
+@socketio.on('connect', namespace=name_space)# 有客户端连接会触发该函数
+def on_connect():
+    # 建立连接 sid:连接对象ID
+    client_id = request.sid
+    client_query.append(client_id)
+    # emit(event_name, broadcasted_data, broadcast=False, namespace=name_space, room=client_id)  #指定一个客户端发送消息
+    # emit(event_name, broadcasted_data, broadcast=True, namespace=name_space)  #对name_space下的所有客户端发送消息
+    print('有新连接,id=%s接加入, 当前连接数%d' % (client_id, len(client_query)))
+    emit('connect', str(client_id), broadcast=False, namespace=name_space, room=client_id)
+
+@socketio.on('disconnect', namespace=name_space)# 有客户端断开WebSocket会触发该函数
+def on_disconnect():
+    # 连接对象关闭 删除对象ID
+    client_query.remove(request.sid)
+    print('有连接,id=%s接退出, 当前连接数%d' % (request.sid, len(client_query)))
+
+# on('消息订阅对象', '命名空间区分')
+# 对信息进行分类处理
+@socketio.on('message', namespace=name_space)
+def on_message(message):
+   """ 服务端接收消息 """
+   message = eval(message)
+   print('从id=%s客户端中收到消息，内容如下:' % request.sid)
+   #print(message['msg'])
+   #print(message['type'])
+   client_id = message['room']
+
+   #print(client_id)
+
+   if message['type'] == 'user_c':
+      userQuestionAdd(client_id,message['userId'],message['docId'])
+      emit('my_response_message', message['msg'], broadcast=False, namespace=name_space, room=client_id)  #指定一个客户端发送消息
+   elif message['type'] == 'user_q':
+      emit('my_response_message', message['msg'], broadcast=False, namespace=name_space, room=client_id)  #指定一个客户端发送消息
+   elif message['type'] == 'doctor_a':
+      print(message['msg'])
+      emit('my_response_message', message['msg'], broadcast=False, namespace=name_space, room=client_id)  #指定一个客户端发送消息
+   
+@socketio.on('doc_room', namespace=name_space)
+def on_roomMessage(message):
+   message = eval(message)
+   client_id = message['userRoom']
+   emit("doc_room",message['docRoom'], namespace=name_space, room=client_id)
+
+
+
+
+
+@app.route('/user_graph/',methods=['POST', 'GET'])
+def graph():
    navList = [
-      {"name":'医药问答',"url":"/user_AIqa/"+str(userid)},
-      {"name":'线上问诊',"url":"/user_docqa/"+str(userid)},
-      {"name":'信息修改',"url":"/user_infochange/"+str(userid)},
-      {"name":'我的收藏',"url":"/user_history/"+str(userid)},
-      {"name":'意见反馈',"url":"/user_comment/"+str(userid)},
-      {"name":'知识图谱',"url":"/user_graph/"+str(userid)}
+      {"name":'医药问答',"url":"/user_AIqa/"},
+      {"name":'线上问诊',"url":"/user_docqa/"},
+      {"name":'信息修改',"url":"/user_infochange/"},
+      {"name":'我的收藏',"url":"/user_history/"},
+      {"name":'意见反馈',"url":"/user_comment/"},
+      {"name":'知识图谱',"url":"/user_graph/"}
    ]
 
    grap = selectDisease("")
@@ -48,11 +103,16 @@ def useraskdoc(userid):
 def doctouserqa(userid):
    docLogin(userid)
    if request.method == 'GET':
-      pass
+      responseText = docGetUserList(userid)
    if request.method == 'POST':
       pass
    
-   return render_template('doctor_userqa.html')
+   return render_template('doctor_userqa.html',responseText=responseText)
+
+
+
+
+
 
 
 
@@ -348,5 +408,5 @@ def speechget():
 
 
 if __name__ == '__main__':
+   socketio.run(app, host='127.0.0.1', port=5000, debug=False)
    #app.run(debug = True)
-   socketio.run(app, host="127.0.0.1", port=5000)

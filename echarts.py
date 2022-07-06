@@ -27,24 +27,24 @@ def getInfoOfDisease(Disease):
     return dataDict
 
 def process4echarts(root,data):
-    category = ["病症","信息"]
+    category = ["病症"]
     for i in data:
         if data[i] not in category:
             category.append(data[i])
     rootNode = {"name":root , "symbolSize": 30,"category":0}
 
-    nodesCategory = [{"name":i,"symbolSize": 30,"category":1} for i in category[2:]]
+    #nodesCategory = [{"name":i,"symbolSize": 30,"category":1} for i in category[2:]]
 
-    links = [{"source": root, "target": i,"value":"1"} for i in category[2:]]
+    #links = [{"source": root, "target": i,"value":"1"} for i in category[2:]]
 
-    nodes =  nodesCategory
+    #nodes =  nodesCategory
 
-    #nodes = [{"name":i,"symbolSize": 30,"category":category.index(data[i])} for i in data]
-    #category = [{"name":i} for i in category]
-    #nodes.insert(0,rootNode)
-    #links = [
-    #    {"source": root, "target": i,"value":data[i]} for i in data
-    #]
+    nodes = [{"name":i,"symbolSize": 30,"category":category.index(data[i])} for i in data]
+    category = [{"name":i} for i in category]
+    nodes.insert(0,rootNode)
+    links = [
+        {"source": root, "target": i,"value":data[i]} for i in data
+    ]
 
     c = (
         Graph2()

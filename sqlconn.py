@@ -777,14 +777,13 @@ def docLogin(input):
     )
     cur = conn.cursor()  # 创建游标对象
     sql = 'update qaOnlineDoctor set `status` = 1 where doc_phoneId = \"'+input+"\";"
+    #print(sql)
     cur.execute(sql)  # 执行sql语句
-    data = cur.fetchall()
-    print(data)
     cur.close()  # 关闭游标
     conn.close() # 关闭连接
 
 # for doctor logout and change status
-def docLogin(input):
+def docLogout(input):
     conn=pymysql.connect(
         host="47.98.226.235",
         port=3306,
@@ -800,7 +799,7 @@ def docLogin(input):
     cur.close()  # 关闭游标
     conn.close() # 关闭连接
 
-def msgInit(inputUid,inputDid):
+def userQuestionAdd(room,inputUid,inputDid):
     conn=pymysql.connect(
         host="47.98.226.235",
         port=3306,
@@ -809,14 +808,25 @@ def msgInit(inputUid,inputDid):
         db='flask'
     )
     cur = conn.cursor()  # 创建游标对象
-    sql = 'insert into qaOnline values (0,now(),\"'+inputUid+"\",\""+inputDid+"\",\"[]\",\"[]\");"
-    cur.execute(sql)  # 执行sql语句
-    data = cur.fetchall()
-    print(data)
-    cur.close()  # 关闭游标
-    conn.close() # 关闭连接
+    content=[room,inputUid,inputDid]
+    sql = 'insert into qaOnline values (0,now(),%s,%s,%s,2);'
+    try:
+        cur.executemany(sql,[content])
+        conn.commit()
+        result=cur.fetchall()
+        if len(result)==1:
+            cur.close() # 关闭游标
+            conn.close() # 关闭连接
+            print(result)
+            return result
+        else:
+            return False
 
-def msgSend(input):
+    except:
+        traceback.print_exc()
+        conn.rollback()
+
+def docGetUserList(inputDid):
     conn=pymysql.connect(
         host="47.98.226.235",
         port=3306,
@@ -825,14 +835,27 @@ def msgSend(input):
         db='flask'
     )
     cur = conn.cursor()  # 创建游标对象
-    sql = 'update qaOnlineDoctor set `status` = 0 where doc_phoneId = \"'+input+"\";"
+    sql = 'select uid,did,userRoom from qaOnline where did = \"'+inputDid+'\" and `status` = 2'
     cur.execute(sql)  # 执行sql语句
     data = cur.fetchall()
-    print(data)
     cur.close()  # 关闭游标
     conn.close() # 关闭连接
+    return data
 
-
+def docUserInfoChange(inputDid):
+    conn=pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cur = conn.cursor()  # 创建游标对象
+    sql = 'update qaOnline set docRoom = \"'+inputDid+'\" where uid = '
+    cur.execute(sql)  # 执行sql语句
+    data = cur.fetchall()
+    cur.close()  # 关闭游标
+    conn.close() # 关闭连接
 
 
 
