@@ -5,6 +5,7 @@ import json
 
 neo = None
 
+
 def initNeo():
     try:
         global neo
@@ -12,6 +13,8 @@ def initNeo():
         neo = Graph("http://localhost:7474", auth=("neo4j","123456"))
     except Exception as e:
         print(e)
+
+initNeo()
 
 # get disease
 # input: symptom of disease
@@ -33,6 +36,7 @@ def process4echarts(root,data):
             category.append(data[i])
     rootNode = {"name":root , "symbolSize": 30,"category":0}
 
+
     #nodesCategory = [{"name":i,"symbolSize": 30,"category":1} for i in category[2:]]
 
     #links = [{"source": root, "target": i,"value":"1"} for i in category[2:]]
@@ -42,6 +46,7 @@ def process4echarts(root,data):
     nodes = [{"name":i,"symbolSize": 30,"category":category.index(data[i])} for i in data]
     category = [{"name":i} for i in category]
     nodes.insert(0,rootNode)
+
     links = [
         {"source": root, "target": i,"value":data[i]} for i in data
     ]
@@ -64,6 +69,6 @@ def process4echarts(root,data):
     return c.render_embed()
 
 def selectDisease(input):
-    data = getInfoOfDisease("减压病")
-    re = process4echarts("减压病",data)
+    data = getInfoOfDisease(input)
+    re = process4echarts(input,data)
     return re

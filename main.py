@@ -1,4 +1,5 @@
 from flask import Flask, redirect, url_for, request,render_template,make_response
+from sqlalchemy import null
 from sqlconn import *
 from chat import ChatBotGraph
 from echarts import selectDisease,initNeo
@@ -90,7 +91,7 @@ def complete(message):
    pass
 
 
-@app.route('/user_graph/',methods=['POST', 'GET'])
+@app.route('/user_graph',methods=['POST', 'GET'])
 def graph():
    navList = [
       {"name":'医药问答',"url":"/user_AIqa/"},
@@ -100,8 +101,11 @@ def graph():
       {"name":'意见反馈',"url":"/user_comment/"},
       {"name":'知识图谱',"url":"/user_graph/"}
    ]
-
-   grap = selectDisease("")
+   grap = null
+   if request.method == 'POST':
+      diss = request.form["question_text"]
+      grap = selectDisease(diss)
+   
    
    return make_response(render_template('user_graph.html', navList = navList,grap=grap))
 
@@ -114,7 +118,7 @@ def useraskdoc(userid):
       docList = getOnlineDoctor()
       responseText = docList
    if request.method == 'POST':
-      print(request.form.get("msg"))
+      print(request.form.get("inputData"))
       return request.form
    
    return render_template('user_doctorqa.html',responseText=responseText)
