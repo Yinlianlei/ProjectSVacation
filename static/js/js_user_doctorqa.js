@@ -1,3 +1,8 @@
+windw_socket=null
+room = null
+userRoom = null
+docId = null
+
 function herfChange0(){
     var myurl=location.href;
     myurl=myurl.split("/");
@@ -28,6 +33,17 @@ function herfChange4(){
    window.location.href="../user_comment/"+myurl[4];
 }
 
+function selectDoc(input){
+    docId = input.id
+
+    var myurl=location.href;
+    myurl=myurl.split("/");
+
+    if(windw_socket!=null){
+        windw_socket.emit('message', '{"sourceRoom":"","room":\"'+userRoom+'\","type":"user_c","userId":\"'+myurl[4]+'\","docId":\"'+docId+'\","msg":"waiting"}');
+    }
+}
+
 function userAIqa(){
     var myurl=location.href;
     myurl=myurl.split("/");
@@ -43,10 +59,20 @@ function sendDocName(input){
     userInputText.value = input.innerHTML;
 }
 
+// send msg
+function send_msg(userId,docId,msg){
+    if(windw_socket!=null){
+        //room = docRoomNum
+        //console.log(room)
+        windw_socket.emit('message', '{"sourceRoom":\"'+userRoom+'\","room":\"'+room+'\","type":"user_q","userId":\"'+userId+'\","docId":\"'+docId+'\","msg":\"'+msg+'\"}');
+    }
+}
+
+
 function buttonLis(){
     // 成功发送
     var send_message=document.getElementById("chat_middle_item");  //获取框内信息
-    var domBtm=document.getElementById("button");   //点击按钮
+    //var domBtm=document.getElementById("button");   //点击按钮
 
     // 发送内容
     var message=document.getElementById("chat_context_item");
@@ -72,9 +98,71 @@ function buttonLis(){
     var myurl=location.href;
     myurl=myurl.split("/");
 
-    var did = document.getElementsByName(str)[0].id
+    send_msg(myurl[4],docId.id,str);
+}
 
-    $.post('/user_docqa/'+myurl[4],data={"uid":myurl[4],"did":did,"msg":"WDNMD"},function(res){
-        console.log(res);
+
+function ws(){
+	namespace = '/websocket';
+	var websocket_url = location.protocol+'//' + document.domain + ':' + location.port + namespace;
+	var socket=io.connect(websocket_url);
+	// socket.emit('connect2', {'param':'value'});	//发送消息
+	// socket.close()
+	socket.on('connect',function(data){
+		console.log('connecte:'+data);
+        userRoom = data;
+		//alert("建立连接成功")
+		windw_socket=socket
+	});
+	socket.on('disconnect',function(data){
+		//alert("连接已断开")
+		console.log('disconnecte:'+data);
+	});
+
+    //监听返回值
+	socket.on('my_response_message',function(data){
+        var send_message=document.getElementById("chat_middle_item");  //获取框内信息
+		console.log('my_response_message:'+data);
+		//alert("收到服务端的回复:"+data)
+        
+        var txt =   "<div class=\"chat_left clearfix\">"+
+                        "<div class=\"chat_left_item_1\">Doctor</div>"+
+                        "<div class=\"chat_left_item_2\">"+
+                            "<div class=\"chat_left_content\">"+
+                                data
+                            "</div>"+
+                        "</div>"+
+                    "</div>"
+
+        var oLi=document.createElement("div");
+        oLi.setAttribute("class","chat_left");
+        oLi.innerHTML=txt;
+        send_message.append(oLi);
+	});
+
+    socket.on("doc_room",function(data){
+        console.log("docRoom:",data);
+        room = data;
     })
 }
+
+function clos_con(){
+    if(windw_socket!=null){
+        windw_socket.close()
+    }
+}
+
+window.onbeforeunload= function(event) {
+    if (windw_socket!=null && !windw_socket.closed){
+    	// confirm(windw_socket.closed)
+    	windw_socket.close()
+    }
+}
+
+window.onunload= function(event) {
+    if (windw_socket!=null && !windw_socket.closed){
+    	//confirm(windw_socket.closed)
+    	windw_socket.close()
+    }
+}
+
