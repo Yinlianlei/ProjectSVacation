@@ -1,8 +1,16 @@
 windw_socket=null
-docRoom = null
 userRoom = null
+docRoom = null
 userId = null
 docId = null
+
+function flush2(){
+    
+}
+
+function flush(){
+    window.location.reload();
+}
 
 function herfChange1(){
     var myurl=location.href;
@@ -30,6 +38,7 @@ function selectUserName(input){
         send_room();
         docId = input.id
         userId = input.name
+        windw_socket.emit('message', '{"sourceRoom":\"'+docRoom+'\","room":\"'+docRoom+'\","type":"doctor_a","userId":\"'+input.name+'\","docId":\"'+input.id+'\","msg":"meesage send!"}');
         windw_socket.emit('message', '{"sourceRoom":\"'+docRoom+'\","room":\"'+targetRoom+'\","type":"doctor_a","userId":\"'+input.name+'\","docId":\"'+input.id+'\","msg":"Dc.Yin had join this room"}');
     }else{
         console.log("NULL!")
@@ -42,10 +51,8 @@ function send_room(){
     }
 }
 
-
 function send_msg(msg){
     if(windw_socket!=null){
-        console.log(msg)
         windw_socket.emit('message', '{"sourceRoom":\"'+docRoom+'\","room":\"'+userRoom+'\","type":"doctor_a","userId":\"'+userId+'\","docId":\"'+docId+'\","msg":\"'+msg+'\"}');
     }
 }
@@ -86,7 +93,7 @@ function dc(){
 	// socket.emit('connect2', {'param':'value'});	//发送消息
 	// socket.close()room
 	socket.on('connect',function(data){
-		console.log('connecte:'+data);
+		//console.log('connecte:'+data);
         docRoom = data;
 		//alert("建立连接成功")
 		windw_socket=socket
@@ -94,13 +101,16 @@ function dc(){
 
 	socket.on('disconnect',function(data){
 		//alert("连接已断开")
-		console.log('disconnecte:'+data);
+		//console.log('disconnecte:'+data);
+        if(windw_socket!=null){
+            windw_socket.emit('message', '{"sourceRoom":\"'+docRoom+'\","room":\"'+userRoom+'\","type":"doctor_a","userId":\"'+userId+'\","docId":\"'+docId+'\","msg":\"window has close\"}');
+        }
 	});
 
     //监听返回值
 	socket.on('my_response_message',function(data){
         var send_message=document.getElementById("chat_middle_item");  //获取框内信息
-		console.log('my_response_message:'+data);
+		//console.log('my_response_message:'+data);
 		//alert("收到服务端的回复:"+data)
         
         var txt =   "<div class=\"chat_left clearfix\">"+
@@ -117,6 +127,16 @@ function dc(){
         oLi.innerHTML=txt;
         send_message.append(oLi);
 	});
+
+    socket.on("command",function(data){
+        if(data == "flush"){
+            setTimeout(function(){
+                windw_socket.emit('message', '{"sourceRoom":\"'+docRoom+'\","room":\"'+docRoom+'\","type":"doctor_a","userId":\"'+input.name+'\","docId":\"'+input.id+'\","msg":"三秒后刷新"}');
+                clos_con()
+                flush()
+            },3000);
+        }
+    })
 }
 
 function clos_con(){

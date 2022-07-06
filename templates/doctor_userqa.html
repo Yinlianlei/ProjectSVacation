@@ -156,7 +156,7 @@
     
     /* foot */
     .chat_foot{
-        width: 450px;
+        width: 100%;
         height: 100px;
         /* 圆角 */
         border-bottom-left-radius: 10px;   
@@ -182,10 +182,15 @@
         height: 30px;
         color: white;
         background-color: #4F7cff;
-        line-height: 30px;
         text-align: center;
         border-radius: 5px;
         margin-right: 10px;
+    }
+
+    #button_container{
+        width: 100%;
+        display: flex;
+        flex-direction: row-reverse;
     }
     
     .chat_context{
@@ -287,18 +292,19 @@
         <div class="chat_middle" id="chat_middle_item">
              <!-- 左边 -->
             <div class="chat_left clearfix">
-                <div class="chat_left_item_1 ">提醒</div>
+                <div class="chat_left_item_1 ">系统</div>
                 <div class="chat_left_item_2">
                     <div class="chat_left_content">
-                        以下用户向您咨询！
+                        <a onclick="flush()">刷新</a>
                     </div>
                 </div>
             </div>
-            <div class="chat_left clearfix">
+            {% if num != 0 %}
+            <div class="chat_left clearfix" id="doc_list">
                 <div class="chat_left_item_1 ">List</div>
                 <div class="chat_left_item_2">
                     <div class="chat_left_content">
-                        当前在线的医生:<br>
+                        当前在线的用户:<br>
                         <table>
                             <tr>
                                 <td>姓名</td>
@@ -315,6 +321,7 @@
                     <p></p>
                 </div>
             </div>
+            {% endif %}
         </div>
         <!-- line -->
         <div class="line"></div>
@@ -322,16 +329,16 @@
         <div class="chat_foot">
             <!-- context -->
             <textarea class="chat_context" id="chat_context_item"  placeholder="请输入"></textarea>
-            <button class="chat_commit" id="button" onclick="buttonLis()">发送</button>
-            <!-- <div class="chat_commit" id="voicebutton" >语音</div> -->
-            <!-- <div class="contrs">
-                <input type="button" value="开始录音1516" onclick="startRecording()"/>  
-            </div> -->
+            <div id="button_container">
+                <button class="chat_commit" id="button1" onclick="buttonLis()">发送</button>
+                <button class="chat_commit" id="button2" onclick="clos_con()">关闭</button>
+                <button class="chat_commit" id="button3" onclick="flush()">列出列表</button>
+            </div>
         </div>
     </div>
      
 
-     </div>
+    </div>
   </div>
                              
 </body>

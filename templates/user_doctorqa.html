@@ -118,10 +118,13 @@
                 <div class="chat_foot">
                     <!-- context -->
                     <textarea class="chat_context" id="chat_context_item" placeholder="请输入"></textarea>
-                    <button class="chat_commit" id="button" onclick="buttonLis()">发送</button>
+                    <div id="button_container">
+                        <button class="chat_commit" id="button1" onclick="buttonLis()">发送</button>
+                        <button class="chat_commit" id="button2" onclick="clos_con()">关闭</button>
+                        <button class="chat_commit" id="button3" onclick="flush()">列出列表</button>
+                    </div>
                 </div>
             </div>
-            <p id="p1p1">1111</p>
         </div>
     </div> 
 
