@@ -1,7 +1,12 @@
 windw_socket=null
-room = null
 userRoom = null
+userId = null
 docId = null
+room = null
+
+function flush(){
+    window.location.reload();
+}
 
 function herfChange0(){
     var myurl=location.href;
@@ -34,15 +39,18 @@ function herfChange4(){
 }
 
 function selectDoc(input){
-    docId = input.id
-
     var myurl=location.href;
     myurl=myurl.split("/");
+    userId = myurl[4];
 
     if(windw_socket!=null){
+        docId = input.id;
+
+        console.log(docId)
         windw_socket.emit('message', '{"sourceRoom":"","room":\"'+userRoom+'\","type":"user_c","userId":\"'+myurl[4]+'\","docId":\"'+docId+'\","msg":"waiting"}');
     }
 }
+
 
 function userAIqa(){
     var myurl=location.href;
@@ -95,10 +103,7 @@ function buttonLis(){
     send_message.append(oLi);
     message.value="";
 
-    var myurl=location.href;
-    myurl=myurl.split("/");
-
-    send_msg(myurl[4],docId.id,str);
+    send_msg(userId,docId,str);
 }
 
 
@@ -108,12 +113,14 @@ function ws(){
 	var socket=io.connect(websocket_url);
 	// socket.emit('connect2', {'param':'value'});	//发送消息
 	// socket.close()
+
 	socket.on('connect',function(data){
 		console.log('connecte:'+data);
         userRoom = data;
 		//alert("建立连接成功")
 		windw_socket=socket
 	});
+
 	socket.on('disconnect',function(data){
 		//alert("连接已断开")
 		console.log('disconnecte:'+data);
@@ -143,6 +150,15 @@ function ws(){
     socket.on("doc_room",function(data){
         console.log("docRoom:",data);
         room = data;
+    })
+
+    socket.on("command",function(data){
+        if(data == "flush"){
+            setTimeout(function(){
+                clos_con()
+                flush()
+            },3000);
+        }
     })
 }
 

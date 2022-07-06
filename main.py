@@ -33,9 +33,12 @@ def on_connect():
 
 @socketio.on('disconnect', namespace=name_space)# 有客户端断开WebSocket会触发该函数
 def on_disconnect():
-    # 连接对象关闭 删除对象ID
-    client_query.remove(request.sid)
-    print('有连接,id=%s接退出, 当前连接数%d' % (request.sid, len(client_query)))
+   #NPchw4CVlaSjS2rsAAAB
+
+   # 连接对象关闭 删除对象ID
+   client_query.remove(request.sid)
+   print('有连接,id=%s接退出, 当前连接数%d' % (request.sid, len(client_query)))
+
 
 # on('消息订阅对象', '命名空间区分')
 # 对信息进行分类处理
@@ -44,19 +47,36 @@ def on_message(message):
    """ 服务端接收消息 """
    message = eval(message)
    print('从id=%s客户端中收到消息，内容如下:' % request.sid)
+   print(message)
    #print(message['msg'])
    #print(message['type'])
    client_id = message['room']
+   fromType = message['type']
+
+   if client_id not in client_query:
+      client_id = message['sourceRoom']
+      emit('my_response_message', "disconnect, 三秒后刷新", broadcast=False, namespace=name_space, room=client_id)
+      updateQAStatus(message['userId'],message['docId'])
+      if fromType == 'user_q':
+         emit("command","flush",broadcast=False, namespace=name_space, room=client_id)
+      elif fromType == 'doctor_a':
+         emit("command","flush",broadcast=False, namespace=name_space, room=client_id)
+      return
+
+   if fromType == 'command':
+      emit("command",message['msg'],broadcast=False, namespace=name_space, room=client_id)
 
    #print(client_id)
 
-   if message['type'] == 'user_c':
+   if fromType == 'user_c':
       userQuestionAdd(client_id,message['userId'],message['docId'])
       emit('my_response_message', message['msg'], broadcast=False, namespace=name_space, room=client_id)  #指定一个客户端发送消息
-   elif message['type'] == 'user_q':
+   if fromType == 'doctor_c':
+      docLogout(message['docId'])
       emit('my_response_message', message['msg'], broadcast=False, namespace=name_space, room=client_id)  #指定一个客户端发送消息
-   elif message['type'] == 'doctor_a':
-      print(message['msg'])
+   elif fromType == 'user_q':
+      emit('my_response_message', message['msg'], broadcast=False, namespace=name_space, room=client_id)  #指定一个客户端发送消息
+   elif fromType == 'doctor_a':
       emit('my_response_message', message['msg'], broadcast=False, namespace=name_space, room=client_id)  #指定一个客户端发送消息
    
 @socketio.on('doc_room', namespace=name_space)
@@ -65,8 +85,9 @@ def on_roomMessage(message):
    client_id = message['userRoom']
    emit("doc_room",message['docRoom'], namespace=name_space, room=client_id)
 
-
-
+@socketio.on('complete', namespace=name_space)
+def complete(message):
+   pass
 
 
 @app.route('/user_graph/',methods=['POST', 'GET'])
@@ -104,10 +125,11 @@ def doctouserqa(userid):
    docLogin(userid)
    if request.method == 'GET':
       responseText = docGetUserList(userid)
+      print(len(responseText))
    if request.method == 'POST':
       pass
    
-   return render_template('doctor_userqa.html',responseText=responseText)
+   return render_template('doctor_userqa.html',responseText=responseText,num=len(responseText))
 
 
 
@@ -410,3 +432,4 @@ def speechget():
 if __name__ == '__main__':
    socketio.run(app, host='127.0.0.1', port=5000, debug=False)
    #app.run(debug = True)
+   #updateQAStatus("114514","15148984512")

@@ -779,6 +779,7 @@ def docLogin(input):
     sql = 'update qaOnlineDoctor set `status` = 1 where doc_phoneId = \"'+input+"\";"
     #print(sql)
     cur.execute(sql)  # 执行sql语句
+    conn.commit()
     cur.close()  # 关闭游标
     conn.close() # 关闭连接
 
@@ -792,9 +793,10 @@ def docLogout(input):
         db='flask'
     )
     cur = conn.cursor()  # 创建游标对象
-    sql = 'update qaOnlineDoctor set `status` = 0 where doc_phoneId = \"'+input+"\";"
+    sql = 'SET SQL_SAFE_UPDATES = 0;update qaOnlineDoctor set `status` = 0 where doc_phoneId = \"'+input+"\";"
     cur.execute(sql)  # 执行sql语句
     data = cur.fetchall()
+    conn.commit()
     print(data)
     cur.close()  # 关闭游标
     conn.close() # 关闭连接
@@ -851,14 +853,35 @@ def docUserInfoChange(inputDid):
         db='flask'
     )
     cur = conn.cursor()  # 创建游标对象
-    sql = 'update qaOnline set docRoom = \"'+inputDid+'\" where uid = '
+    sql = 'SET SQL_SAFE_UPDATES = 0;update qaOnline set docRoom = \"'+inputDid+'\" where uid = '
     cur.execute(sql)  # 执行sql语句
+    conn.commit()
     data = cur.fetchall()
     cur.close()  # 关闭游标
     conn.close() # 关闭连接
 
 
+def updateQAStatus(inputUid,inputDid):
+    conn=pymysql.connect(
+        host="47.98.226.235",
+        port=3306,
+        user="flask",
+        password="123456",
+        db='flask'
+    )
+    cur = conn.cursor()  # 创建游标对象
+    sql = 'set SQL_SAFE_UPDATES=0;'
+    cur.execute(sql)  # 执行sql语句
+    
+    sql = 'update qaOnline set `status` = 0 where uid = \"'+inputUid+'\" and did = \"'+inputDid+'\";'
+    cur.execute(sql)
+    conn.commit()
 
+    data = cur.fetchall()
+    print(data)
+
+    cur.close()  # 关闭游标
+    conn.close() # 关闭连接
 
 
 
