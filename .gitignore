@@ -1,0 +1,8 @@
+/static/sql.json
+/static/test.json
+/static/base.sql
+/static/medical.json
+/static/node.json
+/neo4j/*
+/data/*
+/static/node_modules/*
